@@ -1,0 +1,872 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-sans: 'Vazirmatn', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --font-mono: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    --ice-blue-primary: #7bb4eb;
+    --ice-blue-glow: rgba(123, 180, 235, 0.45);
+    --coral-accent: #fb7185;
+    --navy-slate: #0f172a;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background: linear-gradient(135deg, #a7ccf2 0%, #c4e0fa 35%, #8dbbeb 70%, #bcdbf8 100%);
+    color: #0f172a;
+    overflow-x: hidden;
+    letter-spacing: -0.01em;
+  }
+
+  code, pre, .font-mono {
+    font-family: var(--font-mono);
+  }
+
+  .font-instrument,
+  .font-engraved,
+  .font-classic {
+    font-family: var(--font-sans);
+  }
+}
+
+/* ===================================================
+   EXCLUSIVE 3D LUXURY LOGO TYPOGRAPHY
+   =================================================== */
+
+.codgar-3d-persian-logo {
+  font-family: 'Vazirmatn', 'Readex Pro', 'Rubik', system-ui, -apple-system, sans-serif !important;
+  font-weight: 900 !important;
+  letter-spacing: normal !important;
+  background: linear-gradient(180deg, #091e42 0%, #1d4ed8 32%, #0284c7 68%, #06b6d4 100%);
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  filter: drop-shadow(0 1.5px 0.5px #ffffff) drop-shadow(0 4px 14px rgba(37, 99, 235, 0.38)) drop-shadow(0 1px 2px rgba(15, 23, 42, 0.35));
+  line-height: 1.2 !important;
+  padding: 2px 8px;
+  display: inline-block;
+  transform: translateZ(0);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+.codgar-3d-latin-logo {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.03em;
+  background: linear-gradient(175deg, #172554 0%, #1d4ed8 35%, #0284c7 70%, #06b6d4 100%);
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  filter: drop-shadow(0 1.5px 0.5px #ffffff) drop-shadow(0 4px 12px rgba(37, 99, 235, 0.35)) drop-shadow(0 1px 3px rgba(15, 23, 42, 0.45));
+  line-height: 1.2 !important;
+  padding: 2px 6px;
+  display: inline-block;
+  transform: translateZ(0);
+}
+
+/* ===================================================
+   WORLD-CLASS MINIMALIST BRAND IDENTITY: YODAW
+   Crisp, architectural, serious luxury tech typography
+   Pure blue spectrum from Deep Navy to Radiant Azure
+   100% razor-sharp, zero-blur slop, subtle micro-bevel
+   =================================================== */
+
+.yodaw-worldclass-logo {
+  display: inline-flex;
+  align-items: baseline;
+  user-select: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.yodaw-glyph {
+  display: inline-block;
+  transform: translateZ(0);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  line-height: 1;
+}
+
+.yodaw-glyph:hover {
+  transform: translateY(-1px);
+}
+
+/* Y: Deep Midnight Sapphire - Authoritative brand anchor */
+.yodaw-g-y {
+  background: linear-gradient(180deg, #1e40af 0%, #1e3a8a 45%, #0f172a 100%);
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  filter: 
+    drop-shadow(0 1px 0px rgba(255, 255, 255, 0.8))
+    drop-shadow(0 1.5px 2px rgba(15, 23, 42, 0.25));
+}
+
+/* O: Rich Royal Cobalt */
+.yodaw-g-o {
+  background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 45%, #172554 100%);
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  filter: 
+    drop-shadow(0 1px 0px rgba(255, 255, 255, 0.8))
+    drop-shadow(0 1.5px 2px rgba(23, 37, 84, 0.22));
+}
+
+/* D: Vibrant Ocean Azure */
+.yodaw-g-d {
+  background: linear-gradient(180deg, #3b82f6 0%, #0284c7 45%, #1e40af 100%);
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  filter: 
+    drop-shadow(0 1px 0px rgba(255, 255, 255, 0.8))
+    drop-shadow(0 1.5px 2px rgba(2, 132, 199, 0.2));
+}
+
+/* A: Electric Cerulean */
+.yodaw-g-a {
+  background: linear-gradient(180deg, #0284c7 0%, #0ea5e9 45%, #1d4ed8 100%);
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  filter: 
+    drop-shadow(0 1px 0px rgba(255, 255, 255, 0.8))
+    drop-shadow(0 1.5px 2px rgba(14, 165, 233, 0.2));
+}
+
+/* W: Radiant Sky Blue */
+.yodaw-g-w {
+  background: linear-gradient(180deg, #38bdf8 0%, #0284c7 45%, #0369a1 100%);
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  filter: 
+    drop-shadow(0 1px 0px rgba(255, 255, 255, 0.8))
+    drop-shadow(0 1.5px 2px rgba(2, 132, 199, 0.22));
+}
+
+/* Persian 3D Progressive Tint Wordmark */
+.yodaw-persian-progressive-3d {
+  display: inline-flex;
+  align-items: center;
+  direction: rtl;
+  font-family: 'Vazirmatn', 'Readex Pro', system-ui, -apple-system, sans-serif !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.01em;
+  background: linear-gradient(to left, #0f172a 0%, #1e3a8a 22%, #2563eb 48%, #0284c7 72%, #38bdf8 92%, #ffffff 100%);
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  filter: 
+    drop-shadow(0 1px 0px rgba(255, 255, 255, 0.95))
+    drop-shadow(0 2px 0px #0369a1)
+    drop-shadow(0 3.5px 2px rgba(2, 132, 199, 0.45))
+    drop-shadow(0 6px 14px rgba(37, 99, 235, 0.4));
+  transform: translateZ(0);
+}
+
+.yodaw-left-3d-logo {
+  display: inline-flex;
+  align-items: center;
+  font-family: 'Unbounded', 'Syne', 'Outfit', system-ui, -apple-system, sans-serif !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.01em !important;
+  line-height: 1 !important;
+  text-transform: uppercase;
+  user-select: none;
+  background: linear-gradient(90deg, #091a44 0%, #1e40af 24%, #0284c7 50%, #0ea5e9 74%, #38bdf8 90%, #a5f3fc 100%);
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  filter: 
+    drop-shadow(0 1px 0px rgba(255, 255, 255, 0.95))
+    drop-shadow(0 2px 0px #075985)
+    drop-shadow(0 3px 1.5px rgba(15, 23, 42, 0.4))
+    drop-shadow(0 5px 12px rgba(37, 99, 235, 0.35));
+  transform: translateZ(0);
+}
+
+.yodaw-left-persian-3d {
+  display: inline-flex;
+  align-items: center;
+  direction: rtl;
+  font-family: 'Vazirmatn', 'Readex Pro', system-ui, -apple-system, sans-serif !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.01em !important;
+  line-height: 1 !important;
+  user-select: none;
+  background: linear-gradient(270deg, #091a44 0%, #1e40af 24%, #0284c7 50%, #0ea5e9 74%, #38bdf8 90%, #ffffff 100%);
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  filter: 
+    drop-shadow(0 1px 0px rgba(255, 255, 255, 0.95))
+    drop-shadow(0 2px 0px #075985)
+    drop-shadow(0 3px 1.5px rgba(15, 23, 42, 0.4))
+    drop-shadow(0 5px 12px rgba(37, 99, 235, 0.35));
+  transform: translateZ(0);
+}
+
+.yodaw-3d-persian-logo {
+  font-family: 'Vazirmatn', 'Readex Pro', 'Rubik', system-ui, -apple-system, sans-serif !important;
+  font-weight: 900 !important;
+  letter-spacing: normal !important;
+  background: linear-gradient(180deg, #ffffff 0%, #38bdf8 45%, #1d4ed8 100%);
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  filter: drop-shadow(0 1.5px 0.5px #ffffff) drop-shadow(0 4px 14px rgba(37, 99, 235, 0.35)) drop-shadow(0 1px 2px rgba(15, 23, 42, 0.35));
+  line-height: 1.2 !important;
+  padding: 2px 8px;
+  display: inline-block;
+  transform: translateZ(0);
+}
+
+.yodaw-3d-latin-logo {
+  font-family: 'Syne', 'Outfit', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+  font-weight: 950 !important;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, #ffffff 0%, #38bdf8 45%, #1d4ed8 100%);
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  filter: drop-shadow(0 1.5px 0.5px #ffffff) drop-shadow(0 4px 16px rgba(37, 99, 235, 0.35)) drop-shadow(0 1px 3px rgba(15, 23, 42, 0.35));
+  line-height: 1.2 !important;
+  padding: 2px 8px;
+  display: inline-block;
+  transform: translateZ(0);
+}
+
+/* ===================================================
+   PERSIAN BIDI & TYPOGRAPHY HARMONY ENGINE
+   =================================================== */
+
+.markdown-body {
+  font-family: 'Vazirmatn', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+  line-height: 1.85 !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+  unicode-bidi: plaintext !important;
+}
+
+.markdown-body p,
+.markdown-body li,
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3 {
+  unicode-bidi: plaintext !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+}
+
+.markdown-body code {
+  direction: ltr !important;
+  font-family: var(--font-mono) !important;
+  word-break: break-all !important;
+  overflow-wrap: anywhere !important;
+  unicode-bidi: embed !important;
+}
+
+.markdown-body pre {
+  direction: ltr !important;
+  text-align: left !important;
+  overflow-x: auto !important;
+  max-width: 100% !important;
+  white-space: pre-wrap !important;
+  word-break: break-all !important;
+}
+
+/* ===================================================
+   CRYSTAL ICE-BLUE LIQUID GLASS DESIGN SYSTEM (IMG_3379)
+   =================================================== */
+
+/* Gentle Liquid Thinking Animation (Pure White & Celestial Blue breathing/pulsing glow, NO red) */
+@keyframes codgarThinkingHue {
+  0% {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(240, 249, 255, 0.9), rgba(224, 242, 254, 0.85));
+    box-shadow: 0 0 14px rgba(255, 255, 255, 0.9), 0 0 20px rgba(56, 189, 248, 0.35), 0 4px 12px rgba(37, 99, 235, 0.15);
+    border-color: rgba(255, 255, 255, 1);
+    opacity: 0.85;
+  }
+  50% {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.98), rgba(186, 230, 253, 0.95));
+    box-shadow: 0 0 24px rgba(255, 255, 255, 1), 0 0 32px rgba(56, 189, 248, 0.65), 0 4px 16px rgba(37, 99, 235, 0.28);
+    border-color: rgba(255, 255, 255, 1);
+    opacity: 1;
+    transform: scale(1.03);
+  }
+  100% {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(240, 249, 255, 0.9), rgba(224, 242, 254, 0.85));
+    box-shadow: 0 0 14px rgba(255, 255, 255, 0.9), 0 0 20px rgba(56, 189, 248, 0.35), 0 4px 12px rgba(37, 99, 235, 0.15);
+    border-color: rgba(255, 255, 255, 1);
+    opacity: 0.85;
+  }
+}
+
+@keyframes playfulOrbitalSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes playfulDotPulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.28);
+    filter: brightness(1.25);
+  }
+}
+
+.animate-playful-orbit {
+  animation: playfulOrbitalSpin 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.animate-playful-orbit-fast {
+  animation: playfulOrbitalSpin 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.animate-playful-dot-1 {
+  animation: playfulDotPulse 2s ease-in-out infinite;
+}
+
+.animate-playful-dot-2 {
+  animation: playfulDotPulse 2s ease-in-out 0.5s infinite;
+}
+
+.animate-playful-dot-3 {
+  animation: playfulDotPulse 2s ease-in-out 1s infinite;
+}
+
+.animate-playful-dot-4 {
+  animation: playfulDotPulse 2s ease-in-out 1.5s infinite;
+}
+
+.animate-codgar-thinking {
+  animation: codgarThinkingHue 4.5s ease-in-out infinite;
+}
+
+.animate-codgar-icon {
+  animation: codgarIconBreath 4.5s ease-in-out infinite;
+}
+
+/* ===================================================
+   CODGAR 3-CIRCLE FLUID THINKING ANIMATION
+   Harmonious blend of Coral-Rose (#fb7185), Slate-Gray (#94a3b8), and Sky-Cyan (#38bdf8)
+   =================================================== */
+@keyframes fluidCircleOne {
+  0% {
+    background-color: #fb7185;
+    box-shadow: 0 0 10px rgba(251, 113, 133, 0.85);
+    transform: scale(1) translateY(0);
+  }
+  33% {
+    background-color: #38bdf8;
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.85);
+    transform: scale(1.22) translateY(-2px);
+  }
+  66% {
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
+    transform: scale(0.92) translateY(1px);
+  }
+  100% {
+    background-color: #fb7185;
+    box-shadow: 0 0 10px rgba(251, 113, 133, 0.85);
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes fluidCircleTwo {
+  0% {
+    background-color: #94a3b8;
+    box-shadow: 0 0 8px rgba(148, 163, 184, 0.7);
+    transform: scale(1) translateY(0);
+  }
+  33% {
+    background-color: #fb7185;
+    box-shadow: 0 0 12px rgba(251, 113, 133, 0.85);
+    transform: scale(1.22) translateY(-2px);
+  }
+  66% {
+    background-color: #38bdf8;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.85);
+    transform: scale(0.92) translateY(1px);
+  }
+  100% {
+    background-color: #94a3b8;
+    box-shadow: 0 0 8px rgba(148, 163, 184, 0.7);
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes fluidCircleThree {
+  0% {
+    background-color: #38bdf8;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.85);
+    transform: scale(1) translateY(0);
+  }
+  33% {
+    background-color: #ffffff;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
+    transform: scale(1.22) translateY(-2px);
+  }
+  66% {
+    background-color: #fb7185;
+    box-shadow: 0 0 10px rgba(251, 113, 133, 0.85);
+    transform: scale(0.92) translateY(1px);
+  }
+  100% {
+    background-color: #38bdf8;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.85);
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-fluid-circle-1 {
+  animation: fluidCircleOne 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.animate-fluid-circle-2 {
+  animation: fluidCircleTwo 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation-delay: 0.35s;
+}
+
+.animate-fluid-circle-3 {
+  animation: fluidCircleThree 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation-delay: 0.7s;
+}
+
+.ice-glass-window {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.65) 0%, rgba(228, 242, 255, 0.45) 50%, rgba(205, 230, 255, 0.48) 100%);
+  backdrop-filter: blur(40px) saturate(180%) brightness(103%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%) brightness(103%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  position: relative;
+}
+
+/* Main Chat Window - Clean flat glass with NO drop shadow or halo */
+#grok-chat-container {
+  box-shadow: none !important;
+}
+
+#grok-chat-container::after,
+#grok-chat-container::before {
+  display: none !important;
+  box-shadow: none !important;
+}
+
+/* Glass Card & Modal Panels */
+.ice-glass-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.55) 0%, rgba(215, 235, 255, 0.38) 100%);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 
+    0 20px 45px -8px rgba(37, 99, 235, 0.18),
+    0 8px 20px -4px rgba(0, 0, 0, 0.08),
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.9),
+    inset 0 -1px 2px rgba(147, 197, 253, 0.25);
+}
+
+/* Floating Vertical Dock & Slim Glass Pills */
+.ice-glass-dock {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.65) 0%, rgba(215, 235, 255, 0.45) 100%);
+  backdrop-filter: blur(32px) saturate(190%);
+  -webkit-backdrop-filter: blur(32px) saturate(190%);
+  border: 1.5px solid rgba(255, 255, 255, 0.88);
+  box-shadow: 
+    0 15px 40px rgba(37, 99, 235, 0.2),
+    inset 0 1.5px 3px rgba(255, 255, 255, 0.95),
+    inset 0 -1.5px 3px rgba(147, 197, 253, 0.35);
+}
+
+/* Ice Glass Interactive Button */
+.ice-glass-btn {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.75) 0%, rgba(225, 240, 255, 0.45) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 
+    0 4px 14px rgba(37, 99, 235, 0.15),
+    inset 0 1px 2px rgba(255, 255, 255, 0.95);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ice-glass-btn:hover {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(235, 245, 255, 0.65) 100%);
+  border-color: #ffffff;
+  box-shadow: 
+    0 8px 24px rgba(37, 99, 235, 0.22),
+    inset 0 1.5px 3px #ffffff;
+  transform: translateY(-1px);
+}
+
+.ice-glass-btn:active {
+  transform: translateY(1px) scale(0.97);
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.2);
+}
+
+/* Soft Coral / Pink Active Accent Pill (Reference Top & Sidebar) */
+.coral-pill-btn {
+  background: linear-gradient(135deg, #fb7185 0%, #f43f5e 100%);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 
+    0 8px 20px rgba(244, 63, 94, 0.35),
+    0 0 15px rgba(251, 113, 133, 0.4),
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.65);
+  transition: all 0.22s ease;
+}
+
+.coral-pill-btn:hover {
+  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+  box-shadow: 
+    0 12px 28px rgba(244, 63, 94, 0.45),
+    0 0 20px rgba(251, 113, 133, 0.6),
+    inset 0 2px 3px rgba(255, 255, 255, 0.8);
+  transform: translateY(-1px);
+}
+
+/* Soft Rose / Coral Translucent Active Sidebar Pill */
+.rose-glass-active {
+  background: linear-gradient(135deg, rgba(254, 205, 211, 0.85) 0%, rgba(253, 164, 175, 0.7) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  color: #be123c;
+  box-shadow: 
+    0 6px 18px rgba(244, 63, 94, 0.22),
+    inset 0 1px 2px rgba(255, 255, 255, 0.95);
+}
+
+/* Deep Navy Settings Card (Reference Bottom Left) */
+.deep-navy-card {
+  background: linear-gradient(135deg, rgba(30, 58, 138, 0.88) 0%, rgba(15, 23, 42, 0.94) 100%);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1.5px solid rgba(147, 197, 253, 0.5);
+  box-shadow: 
+    0 15px 35px rgba(15, 23, 42, 0.35),
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.35);
+  color: #eff6ff;
+}
+
+/* Refined Soft Cerulean / Liquid Ice-Glass User Chat Bubble */
+.user-glass-bubble-3d {
+  background: linear-gradient(135deg, #5b96ea 0%, #4686e0 50%, #3876d4 100%);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow: 
+    0 10px 24px -4px rgba(59, 130, 246, 0.25),
+    0 4px 10px -2px rgba(15, 23, 42, 0.08),
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.6),
+    inset 0 -1.5px 2px rgba(30, 64, 175, 0.18);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.user-glass-bubble-3d::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 42%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* Secondary Legacy aliases preserved for backward compatibility */
+.amber-glass-card {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.62) 0%, rgba(225, 240, 255, 0.42) 50%, rgba(200, 228, 255, 0.5) 100%);
+  backdrop-filter: blur(36px) saturate(190%);
+  -webkit-backdrop-filter: blur(36px) saturate(190%);
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 25px 60px -10px rgba(59, 130, 246, 0.25), inset 0 2px 4px rgba(255, 255, 255, 0.95);
+}
+
+.amber-glass-beveled {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(215, 235, 255, 0.35) 100%);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.12), inset 0 1px 2px rgba(255, 255, 255, 0.9);
+}
+
+.amber-glass-pill {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.65) 0%, rgba(215, 235, 255, 0.45) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.95);
+}
+
+/* Custom Sleek Scrollbar for Ice Blue */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(225, 238, 255, 0.4);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.35);
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(37, 99, 235, 0.6);
+}
+
+.sphere-btn-3d:active {
+  transform: translateY(1px) scale(0.95);
+  box-shadow: 
+    0 6px 14px rgba(0, 0, 0, 0.6),
+    inset 0 1px 2px rgba(255, 255, 255, 0.4),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* Modal Transparent Backdrop Style */
+.modal-translucent-window {
+  background: rgba(20, 14, 12, 0.72);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  box-shadow: 
+    0 30px 90px rgba(0, 0, 0, 0.85),
+    0 0 40px rgba(245, 158, 11, 0.15),
+    inset 0 1.5px 2px rgba(254, 240, 138, 0.25);
+}
+
+/* Apple VisionOS & iOS Liquid Glass Floating Action Button */
+.apple-liquid-glass-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 18px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.26) 0%,
+    rgba(255, 255, 255, 0.08) 35%,
+    rgba(255, 255, 255, 0.02) 65%,
+    rgba(255, 255, 255, 0.16) 100%
+  );
+  backdrop-filter: blur(36px) saturate(220%) brightness(112%);
+  -webkit-backdrop-filter: blur(36px) saturate(220%) brightness(112%);
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  box-shadow:
+    0 16px 36px -4px rgba(0, 0, 0, 0.72),
+    0 4px 14px rgba(0, 0, 0, 0.4),
+    inset 0 2px 3px rgba(255, 255, 255, 0.85),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.35);
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  color: #fff;
+  cursor: pointer;
+  user-select: none;
+  overflow: hidden;
+}
+
+.apple-liquid-glass-btn::before {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: 6%;
+  right: 6%;
+  height: 48%;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.7) 0%,
+    rgba(255, 255, 255, 0.18) 50%,
+    rgba(255, 255, 255, 0.0) 100%
+  );
+  border-radius: 9999px;
+  pointer-events: none;
+}
+
+.apple-liquid-glass-btn:hover {
+  transform: translateY(-2px) scale(1.025);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.38) 0%,
+    rgba(255, 255, 255, 0.16) 35%,
+    rgba(255, 255, 255, 0.06) 65%,
+    rgba(255, 255, 255, 0.24) 100%
+  );
+  border-color: rgba(255, 255, 255, 0.82);
+  box-shadow:
+    0 22px 50px -4px rgba(0, 0, 0, 0.85),
+    0 0 28px rgba(255, 255, 255, 0.3),
+    inset 0 2.5px 4px rgba(255, 255, 255, 0.95),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.apple-liquid-glass-btn:active {
+  transform: translateY(1px) scale(0.975);
+}
+
+/* Staggered Liquid Cascade Animation */
+@keyframes liquidCascadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-16px) scale(0.9);
+    filter: blur(4px);
+  }
+  60% {
+    opacity: 0.9;
+    filter: blur(0px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0px);
+  }
+}
+
+.liquid-item-cascade {
+  animation: liquidCascadeIn 0.38s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ===================================================
+   RESPONSIVE AUTO-LAYOUT & MOBILE COMFORT ENGINE
+   =================================================== */
+
+/* Safe area support for notched phones (iPhone, Android) */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+}
+
+/* Smooth momentum scrolling on iOS Safari & Android Chrome */
+.custom-scrollbar,
+.overflow-y-auto,
+.overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbars for clean tab rails */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Auto-layout flex child protection: ensure flex children never overflow their container */
+.min-w-0 {
+  min-width: 0 !important;
+}
+
+.min-h-0 {
+  min-height: 0 !important;
+}
+
+/* Universal text wrapping protection */
+.break-words-anywhere {
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+}
+
+/* Prevent accidental iOS double-tap zoom on buttons and touch elements */
+button,
+a,
+input,
+textarea {
+  touch-action: manipulation;
+}
+
+
+
+/* Anti-jitter Hardware Acceleration for macOS WebKit */
+*, *::before, *::after {
+  -webkit-font-smoothing: antialiased;
+  -webkit-backface-visibility: hidden !important;
+  backface-visibility: hidden !important;
+}
+button, a, [role="button"] {
+  transform: translateZ(0) !important;
+  -webkit-transform: translateZ(0) !important;
+  will-change: auto !important;
+}
+
+/* === APPLE HIG SIGNATURE SPRING & BLUR ANIMATIONS === */
+:root {
+  --apple-ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes apple-corner-in {
+  0% {
+    opacity: 0;
+    transform: translate(24px, 20px) scale(0.92);
+    filter: blur(14px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes apple-card-cascade {
+  0% {
+    opacity: 0;
+    transform: translateY(18px) scale(0.96);
+    filter: blur(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes apple-shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes apple-pulse-orb {
+  0%, 100% { opacity: 0.45; transform: scale(0.96); }
+  50% { opacity: 0.85; transform: scale(1.04); filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.6)); }
+}
+
+.apple-spring {
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.apple-modal-enter {
+  animation: apple-corner-in 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+.apple-card-stagger {
+  animation: apple-card-cascade 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards !important;
+}
+
+.apple-shimmer-box {
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.04);
+}
+.apple-shimmer-box::after {
+  content: "";
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+  animation: apple-shimmer 1.4s infinite;
+}
+
+
+/* انیمیشن موجی اختصاصی سه‌نقطه فکری یودا */
+@keyframes yodawWave {
+  0%, 100% { transform: translateY(0px) scale(0.9); opacity: 0.4; }
+  50% { transform: translateY(-5px) scale(1.2); opacity: 1; filter: drop-shadow(0 0 6px currentColor); }
+}
+.yodaw-dot-blue { animation: yodawWave 1.2s infinite ease-in-out; animation-delay: 0s; }
+.yodaw-dot-white { animation: yodawWave 1.2s infinite ease-in-out; animation-delay: 0.2s; }
+.yodaw-dot-pink { animation: yodawWave 1.2s infinite ease-in-out; animation-delay: 0.4s; }

@@ -1,0 +1,6 @@
+{
+  "name": "CODGAR - AI Coding Agent",
+  "description": "Autonomous AI Coding Agent with 3D Canvas, Ambient Soundtrack, Siri Voice Motion & Precision 3D Glassmorphic Fuel Gauge with topographic blueprints",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

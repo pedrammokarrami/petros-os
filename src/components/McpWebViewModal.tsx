@@ -1,0 +1,303 @@
+import React, { useState } from 'react';
+
+export interface McpWebViewModalProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+  code?: string;
+  [key: string]: any;
+}
+
+const DEFAULT_HOTEL_HTML = `<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AURA PALACE | 5-Star Luxury Boutique Hotel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['Playfair Display', 'serif'],
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-[#090a0f] text-[#e0e2ec] font-sans antialiased selection:bg-amber-400 selection:text-black min-h-screen">
+  <!-- Navigation Bar -->
+  <header class="fixed top-0 inset-x-0 z-40 bg-black/40 backdrop-blur-xl border-b border-white/10 px-6 py-3.5 flex items-center justify-between">
+    <div class="flex items-center space-x-3">
+      <div class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></div>
+      <span class="font-serif text-lg tracking-widest text-amber-200 font-bold">AURA PALACE</span>
+      <span class="text-[9px] tracking-widest uppercase px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/20 font-mono">5-Star Boutique</span>
+    </div>
+    <nav class="hidden md:flex items-center space-x-6 text-xs uppercase tracking-widest text-slate-300 font-medium">
+      <a href="#suites" class="hover:text-amber-300 transition">Signature Suites</a>
+      <a href="#experiences" class="hover:text-amber-300 transition">Bespoke Dining</a>
+      <a href="#wellness" class="hover:text-amber-300 transition">Wellness Spa</a>
+    </nav>
+    <button onclick="toggleDrawer()" class="px-5 py-2 rounded-full bg-gradient-to-r from-amber-400 to-amber-600 text-black font-bold text-xs uppercase tracking-wider hover:shadow-lg hover:shadow-amber-500/30 transition transform hover:-translate-y-0.5 cursor-pointer">
+      Book Your Stay
+    </button>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="relative min-h-[85vh] flex items-center justify-center px-6 pt-20 overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-b from-amber-500/10 via-transparent to-[#090a0f] pointer-events-none"></div>
+    <div class="relative z-10 text-center max-w-4xl mx-auto space-y-6">
+      <span class="inline-block text-[11px] uppercase tracking-[0.25em] text-amber-400 font-semibold px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 backdrop-blur-md">
+        Private Coastal Sanctuary
+      </span>
+      <h1 class="font-serif text-4xl md:text-6xl font-bold tracking-tight text-white leading-tight">
+        Where Timeless Serenity Meets <span class="italic bg-gradient-to-r from-amber-200 via-amber-400 to-amber-100 bg-clip-text text-transparent">Bespoke Luxury</span>
+      </h1>
+      <p class="text-slate-400 text-sm md:text-base max-w-2xl mx-auto font-light leading-relaxed">
+        An intimate collection of 28 oceanfront sanctuary residences, Michelin-starred gastronomy, and holistic private wellness retreats.
+      </p>
+      <div class="pt-2 flex items-center justify-center space-x-4">
+        <button onclick="toggleDrawer()" class="px-7 py-3 rounded-full bg-amber-400 text-black font-bold text-xs uppercase tracking-widest hover:bg-amber-300 transition shadow-xl shadow-amber-500/20 cursor-pointer">
+          Check Availability
+        </button>
+        <a href="#suites" class="px-7 py-3 rounded-full bg-white/5 border border-white/10 text-white font-medium text-xs uppercase tracking-widest hover:bg-white/10 transition">
+          Explore Residences
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Suites Section with Glass Cards -->
+  <section id="suites" class="py-20 px-6 max-w-6xl mx-auto">
+    <div class="text-center space-y-2 mb-12">
+      <span class="text-[10px] uppercase tracking-widest text-amber-400 font-mono">Curated Living Spaces</span>
+      <h2 class="font-serif text-3xl font-bold text-white">Signature Residences</h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Glass Card 1 -->
+      <div class="rounded-2xl bg-white/[0.03] border border-white/10 p-5 backdrop-blur-xl hover:border-amber-400/40 transition duration-300 group flex flex-col justify-between">
+        <div class="space-y-4">
+          <div class="h-48 rounded-xl bg-gradient-to-tr from-stone-900 to-neutral-800 flex items-center justify-center relative overflow-hidden">
+            <span class="text-4xl opacity-40 group-hover:scale-110 transition duration-500">🏰</span>
+            <div class="absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-[10px] text-amber-300 font-mono">
+              From $1,250 / night
+            </div>
+          </div>
+          <div>
+            <span class="text-[9px] uppercase tracking-wider text-amber-400 font-mono">Penthouse Sanctuary</span>
+            <h3 class="font-serif text-lg font-bold text-white">Royal Panoramic Penthouse</h3>
+            <p class="text-xs text-slate-400 mt-1.5 font-light leading-relaxed">180° panoramic ocean vistas, private heated infinity plunge pool, and dedicated 24/7 personal butler.</p>
+          </div>
+        </div>
+        <button onclick="toggleDrawer('Royal Panoramic Penthouse')" class="mt-5 w-full py-2.5 rounded-lg bg-white/5 hover:bg-amber-400 hover:text-black text-white text-xs font-semibold uppercase tracking-wider border border-white/10 transition cursor-pointer">
+          Reserve Residence
+        </button>
+      </div>
+
+      <!-- Glass Card 2 -->
+      <div class="rounded-2xl bg-white/[0.03] border border-white/10 p-5 backdrop-blur-xl hover:border-amber-400/40 transition duration-300 group flex flex-col justify-between">
+        <div class="space-y-4">
+          <div class="h-48 rounded-xl bg-gradient-to-tr from-stone-900 to-neutral-800 flex items-center justify-center relative overflow-hidden">
+            <span class="text-4xl opacity-40 group-hover:scale-110 transition duration-500">🌊</span>
+            <div class="absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-[10px] text-amber-300 font-mono">
+              From $1,850 / night
+            </div>
+          </div>
+          <div>
+            <span class="text-[9px] uppercase tracking-wider text-amber-400 font-mono">Waterfront Villa</span>
+            <h3 class="font-serif text-lg font-bold text-white">Azure Beachfront Haven</h3>
+            <p class="text-xs text-slate-400 mt-1.5 font-light leading-relaxed">Direct private shoreline access, open-air cedarwood sundeck, and carved marble soaking tub.</p>
+          </div>
+        </div>
+        <button onclick="toggleDrawer('Azure Beachfront Haven')" class="mt-5 w-full py-2.5 rounded-lg bg-white/5 hover:bg-amber-400 hover:text-black text-white text-xs font-semibold uppercase tracking-wider border border-white/10 transition cursor-pointer">
+          Reserve Residence
+        </button>
+      </div>
+
+      <!-- Glass Card 3 -->
+      <div class="rounded-2xl bg-white/[0.03] border border-white/10 p-5 backdrop-blur-xl hover:border-amber-400/40 transition duration-300 group flex flex-col justify-between">
+        <div class="space-y-4">
+          <div class="h-48 rounded-xl bg-gradient-to-tr from-stone-900 to-neutral-800 flex items-center justify-center relative overflow-hidden">
+            <span class="text-4xl opacity-40 group-hover:scale-110 transition duration-500">🌿</span>
+            <div class="absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-[10px] text-amber-300 font-mono">
+              From $950 / night
+            </div>
+          </div>
+          <div>
+            <span class="text-[9px] uppercase tracking-wider text-amber-400 font-mono">Olive Grove Courtyard</span>
+            <h3 class="font-serif text-lg font-bold text-white">The Botanica Garden Suite</h3>
+            <p class="text-xs text-slate-400 mt-1.5 font-light leading-relaxed">Secluded private courtyard surrounded by century-old olive groves with an artisanal stone fireplace.</p>
+          </div>
+        </div>
+        <button onclick="toggleDrawer('The Botanica Garden Suite')" class="mt-5 w-full py-2.5 rounded-lg bg-white/5 hover:bg-amber-400 hover:text-black text-white text-xs font-semibold uppercase tracking-wider border border-white/10 transition cursor-pointer">
+          Reserve Residence
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Booking Drawer -->
+  <div id="bookingDrawer" class="fixed inset-y-0 right-0 w-full max-w-sm bg-[#111218] border-l border-white/10 shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-out flex flex-col justify-between p-6">
+    <div class="space-y-5">
+      <div class="flex items-center justify-between border-b border-white/10 pb-3">
+        <div>
+          <span class="text-[9px] uppercase tracking-widest text-amber-400 font-mono">VIP Concierge Desk</span>
+          <h3 class="font-serif text-xl font-bold text-white">Reserve Your Stay</h3>
+        </div>
+        <button onclick="toggleDrawer()" class="w-7 h-7 rounded-full bg-white/5 hover:bg-white/10 text-white flex items-center justify-center cursor-pointer">✕</button>
+      </div>
+
+      <div class="space-y-3.5 text-xs">
+        <div>
+          <label class="block text-slate-400 mb-1 text-[11px]">Selected Residence</label>
+          <input id="selectedSuiteInput" value="Royal Panoramic Penthouse" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white font-medium outline-none focus:border-amber-400 text-xs">
+        </div>
+        <div class="grid grid-cols-2 gap-2.5">
+          <div>
+            <label class="block text-slate-400 mb-1 text-[11px]">Check-In</label>
+            <input type="date" value="2026-10-10" class="w-full bg-white/5 border border-white/10 rounded-lg px-2.5 py-1.5 text-white outline-none text-xs">
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1 text-[11px]">Check-Out</label>
+            <input type="date" value="2026-10-15" class="w-full bg-white/5 border border-white/10 rounded-lg px-2.5 py-1.5 text-white outline-none text-xs">
+          </div>
+        </div>
+        <div>
+          <label class="block text-slate-400 mb-1 text-[11px]">Guests</label>
+          <select class="w-full bg-neutral-900 border border-white/10 rounded-lg px-3 py-2 text-white outline-none text-xs">
+            <option>2 Adults (Signature Suite)</option>
+            <option>2 Adults, 1 Child</option>
+            <option>4 Adults (Private Villa)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-slate-400 mb-1 text-[11px]">VIP Preferences</label>
+          <textarea placeholder="Helipad transfer, champagne on arrival, bespoke dining..." class="w-full bg-white/5 border border-white/10 rounded-lg p-2.5 text-white outline-none text-xs h-16"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-3 pt-4 border-t border-white/10">
+      <div class="flex justify-between text-xs">
+        <span class="text-slate-400">Total (5 Nights):</span>
+        <span class="text-amber-300 font-bold font-mono">$6,250 USD</span>
+      </div>
+      <button onclick="confirmBooking()" class="w-full py-3 rounded-lg bg-gradient-to-r from-amber-400 to-amber-500 text-black font-bold text-xs uppercase tracking-widest hover:brightness-110 transition shadow-lg shadow-amber-500/30 cursor-pointer">
+        Confirm VIP Booking
+      </button>
+    </div>
+  </div>
+
+  <div id="drawerOverlay" onclick="toggleDrawer()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden cursor-pointer"></div>
+
+  <script>
+    function toggleDrawer(suite) {
+      const drawer = document.getElementById('bookingDrawer');
+      const overlay = document.getElementById('drawerOverlay');
+      if (suite) document.getElementById('selectedSuiteInput').value = suite;
+      drawer.classList.toggle('translate-x-full');
+      overlay.classList.toggle('hidden');
+    }
+    function confirmBooking() {
+      alert('🎉 Your VIP Reservation Request has been received! Confirmation sent.');
+      toggleDrawer();
+    }
+  </script>
+</body>
+</html>
+`;
+
+export const McpWebViewModal: React.FC<McpWebViewModalProps> = ({ isOpen = true, onClose, code }) => {
+  const [activeTab, setActiveTab] = useState<'preview' | 'code' | 'runner'>('preview');
+  const [viewportMode, setViewportMode] = useState<'desktop' | 'mobile'>('desktop');
+
+  const currentCode = code || DEFAULT_HOTEL_HTML;
+
+  if (isOpen === false) return null;
+
+  return (
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-in fade-in duration-200">
+      <div className="w-full max-w-6xl h-[90vh] bg-[#0c0d14] border border-cyan-500/30 rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+        {/* Header Bar */}
+        <div className="h-11 bg-neutral-900 border-b border-white/10 px-4 flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <span className="text-cyan-400 font-mono text-sm">🌐 App.tsx</span>
+            <span className="text-slate-400 text-xs">● Standalone Live Website Sandbox</span>
+          </div>
+
+          <div className="flex items-center space-x-1 bg-white/5 p-0.5 rounded-lg border border-white/10 text-xs">
+            <button 
+              onClick={() => setActiveTab('preview')}
+              className={`px-3 py-1 rounded font-medium transition ${activeTab === 'preview' ? 'bg-cyan-500 text-black font-bold shadow' : 'text-slate-300 hover:text-white'}`}
+            >
+              👁️ Preview
+            </button>
+            <button 
+              onClick={() => setActiveTab('code')}
+              className={`px-3 py-1 rounded font-medium transition ${activeTab === 'code' ? 'bg-cyan-500 text-black font-bold shadow' : 'text-slate-300 hover:text-white'}`}
+            >
+              {'</>'} Code
+            </button>
+            <button 
+              onClick={() => setActiveTab('runner')}
+              className={`px-3 py-1 rounded font-medium transition ${activeTab === 'runner' ? 'bg-cyan-500 text-black font-bold shadow' : 'text-slate-300 hover:text-white'}`}
+            >
+              ▶ Runner
+            </button>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <button 
+              onClick={() => setViewportMode(viewportMode === 'desktop' ? 'mobile' : 'desktop')}
+              className="text-xs px-2.5 py-1 rounded bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 transition cursor-pointer"
+            >
+              {viewportMode === 'desktop' ? '🖥️ Desktop (16:9)' : '📱 Mobile (iPhone)'}
+            </button>
+            <button 
+              onClick={() => { if (typeof onClose === 'function') onClose(); }}
+              className="w-7 h-7 rounded bg-red-500/20 hover:bg-red-500 text-red-300 hover:text-white flex items-center justify-center transition cursor-pointer font-bold"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+
+        {/* Dynamic Sandbox Body */}
+        <div className="flex-1 overflow-hidden relative bg-[#07080d]">
+          {activeTab === 'preview' && (
+            <div className={`w-full h-full flex items-center justify-center bg-neutral-950 ${viewportMode === 'mobile' ? 'p-6' : ''}`}>
+              <div className={viewportMode === 'mobile' ? 'w-[375px] h-[720px] rounded-3xl overflow-hidden border-4 border-slate-700 shadow-2xl bg-white' : 'w-full h-full bg-white'}>
+                <iframe 
+                  title="Live Preview Sandbox"
+                  srcDoc={currentCode}
+                  className="w-full h-full border-0"
+                  sandbox="allow-scripts allow-modals allow-forms allow-same-origin"
+                />
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'code' && (
+            <div className="w-full h-full p-4 overflow-auto font-mono text-xs text-cyan-300 bg-[#07080d]">
+              <pre className="select-text whitespace-pre-wrap">{currentCode}</pre>
+            </div>
+          )}
+
+          {activeTab === 'runner' && (
+            <div className="w-full h-full p-4 overflow-auto font-mono text-xs text-emerald-400 bg-black/90 space-y-1">
+              <div>[Sandbox] ✅ Dynamic HTML5/Tailwind Sandbox Active.</div>
+              <div>[Sandbox] 🚀 Rendered: Luxury 5-Star Boutique Hotel Landing Page.</div>
+              <div>[Sandbox] ⚡ Booking Drawer & Glass Cards: Interactive.</div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default McpWebViewModal;

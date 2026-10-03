@@ -1,0 +1,502 @@
+[
+  {
+    "id": "hospitality-1",
+    "category": "hospitality",
+    "title": "Hospitality Luxe 1"
+  },
+  {
+    "id": "hospitality-2",
+    "category": "hospitality",
+    "title": "Hospitality Luxe 2"
+  },
+  {
+    "id": "hospitality-3",
+    "category": "hospitality",
+    "title": "Hospitality Luxe 3"
+  },
+  {
+    "id": "hospitality-4",
+    "category": "hospitality",
+    "title": "Hospitality Luxe 4"
+  },
+  {
+    "id": "hospitality-5",
+    "category": "hospitality",
+    "title": "Hospitality Luxe 5"
+  },
+  {
+    "id": "hospitality-6",
+    "category": "hospitality",
+    "title": "Hospitality Luxe 6"
+  },
+  {
+    "id": "hospitality-7",
+    "category": "hospitality",
+    "title": "Hospitality Luxe 7"
+  },
+  {
+    "id": "hospitality-8",
+    "category": "hospitality",
+    "title": "Hospitality Luxe 8"
+  },
+  {
+    "id": "hospitality-9",
+    "category": "hospitality",
+    "title": "Hospitality Luxe 9"
+  },
+  {
+    "id": "hospitality-10",
+    "category": "hospitality",
+    "title": "Hospitality Luxe 10"
+  },
+  {
+    "id": "medical-1",
+    "category": "medical",
+    "title": "Medical Luxe 1"
+  },
+  {
+    "id": "medical-2",
+    "category": "medical",
+    "title": "Medical Luxe 2"
+  },
+  {
+    "id": "medical-3",
+    "category": "medical",
+    "title": "Medical Luxe 3"
+  },
+  {
+    "id": "medical-4",
+    "category": "medical",
+    "title": "Medical Luxe 4"
+  },
+  {
+    "id": "medical-5",
+    "category": "medical",
+    "title": "Medical Luxe 5"
+  },
+  {
+    "id": "medical-6",
+    "category": "medical",
+    "title": "Medical Luxe 6"
+  },
+  {
+    "id": "medical-7",
+    "category": "medical",
+    "title": "Medical Luxe 7"
+  },
+  {
+    "id": "medical-8",
+    "category": "medical",
+    "title": "Medical Luxe 8"
+  },
+  {
+    "id": "medical-9",
+    "category": "medical",
+    "title": "Medical Luxe 9"
+  },
+  {
+    "id": "medical-10",
+    "category": "medical",
+    "title": "Medical Luxe 10"
+  },
+  {
+    "id": "saas-1",
+    "category": "saas",
+    "title": "Saas Luxe 1"
+  },
+  {
+    "id": "saas-2",
+    "category": "saas",
+    "title": "Saas Luxe 2"
+  },
+  {
+    "id": "saas-3",
+    "category": "saas",
+    "title": "Saas Luxe 3"
+  },
+  {
+    "id": "saas-4",
+    "category": "saas",
+    "title": "Saas Luxe 4"
+  },
+  {
+    "id": "saas-5",
+    "category": "saas",
+    "title": "Saas Luxe 5"
+  },
+  {
+    "id": "saas-6",
+    "category": "saas",
+    "title": "Saas Luxe 6"
+  },
+  {
+    "id": "saas-7",
+    "category": "saas",
+    "title": "Saas Luxe 7"
+  },
+  {
+    "id": "saas-8",
+    "category": "saas",
+    "title": "Saas Luxe 8"
+  },
+  {
+    "id": "saas-9",
+    "category": "saas",
+    "title": "Saas Luxe 9"
+  },
+  {
+    "id": "saas-10",
+    "category": "saas",
+    "title": "Saas Luxe 10"
+  },
+  {
+    "id": "restaurant-1",
+    "category": "restaurant",
+    "title": "Restaurant Luxe 1"
+  },
+  {
+    "id": "restaurant-2",
+    "category": "restaurant",
+    "title": "Restaurant Luxe 2"
+  },
+  {
+    "id": "restaurant-3",
+    "category": "restaurant",
+    "title": "Restaurant Luxe 3"
+  },
+  {
+    "id": "restaurant-4",
+    "category": "restaurant",
+    "title": "Restaurant Luxe 4"
+  },
+  {
+    "id": "restaurant-5",
+    "category": "restaurant",
+    "title": "Restaurant Luxe 5"
+  },
+  {
+    "id": "restaurant-6",
+    "category": "restaurant",
+    "title": "Restaurant Luxe 6"
+  },
+  {
+    "id": "restaurant-7",
+    "category": "restaurant",
+    "title": "Restaurant Luxe 7"
+  },
+  {
+    "id": "restaurant-8",
+    "category": "restaurant",
+    "title": "Restaurant Luxe 8"
+  },
+  {
+    "id": "restaurant-9",
+    "category": "restaurant",
+    "title": "Restaurant Luxe 9"
+  },
+  {
+    "id": "restaurant-10",
+    "category": "restaurant",
+    "title": "Restaurant Luxe 10"
+  },
+  {
+    "id": "ecommerce-1",
+    "category": "ecommerce",
+    "title": "Ecommerce Luxe 1"
+  },
+  {
+    "id": "ecommerce-2",
+    "category": "ecommerce",
+    "title": "Ecommerce Luxe 2"
+  },
+  {
+    "id": "ecommerce-3",
+    "category": "ecommerce",
+    "title": "Ecommerce Luxe 3"
+  },
+  {
+    "id": "ecommerce-4",
+    "category": "ecommerce",
+    "title": "Ecommerce Luxe 4"
+  },
+  {
+    "id": "ecommerce-5",
+    "category": "ecommerce",
+    "title": "Ecommerce Luxe 5"
+  },
+  {
+    "id": "ecommerce-6",
+    "category": "ecommerce",
+    "title": "Ecommerce Luxe 6"
+  },
+  {
+    "id": "ecommerce-7",
+    "category": "ecommerce",
+    "title": "Ecommerce Luxe 7"
+  },
+  {
+    "id": "ecommerce-8",
+    "category": "ecommerce",
+    "title": "Ecommerce Luxe 8"
+  },
+  {
+    "id": "ecommerce-9",
+    "category": "ecommerce",
+    "title": "Ecommerce Luxe 9"
+  },
+  {
+    "id": "ecommerce-10",
+    "category": "ecommerce",
+    "title": "Ecommerce Luxe 10"
+  },
+  {
+    "id": "real_estate-1",
+    "category": "real_estate",
+    "title": "Real_Estate Luxe 1"
+  },
+  {
+    "id": "real_estate-2",
+    "category": "real_estate",
+    "title": "Real_Estate Luxe 2"
+  },
+  {
+    "id": "real_estate-3",
+    "category": "real_estate",
+    "title": "Real_Estate Luxe 3"
+  },
+  {
+    "id": "real_estate-4",
+    "category": "real_estate",
+    "title": "Real_Estate Luxe 4"
+  },
+  {
+    "id": "real_estate-5",
+    "category": "real_estate",
+    "title": "Real_Estate Luxe 5"
+  },
+  {
+    "id": "real_estate-6",
+    "category": "real_estate",
+    "title": "Real_Estate Luxe 6"
+  },
+  {
+    "id": "real_estate-7",
+    "category": "real_estate",
+    "title": "Real_Estate Luxe 7"
+  },
+  {
+    "id": "real_estate-8",
+    "category": "real_estate",
+    "title": "Real_Estate Luxe 8"
+  },
+  {
+    "id": "real_estate-9",
+    "category": "real_estate",
+    "title": "Real_Estate Luxe 9"
+  },
+  {
+    "id": "real_estate-10",
+    "category": "real_estate",
+    "title": "Real_Estate Luxe 10"
+  },
+  {
+    "id": "creative-1",
+    "category": "creative",
+    "title": "Creative Luxe 1"
+  },
+  {
+    "id": "creative-2",
+    "category": "creative",
+    "title": "Creative Luxe 2"
+  },
+  {
+    "id": "creative-3",
+    "category": "creative",
+    "title": "Creative Luxe 3"
+  },
+  {
+    "id": "creative-4",
+    "category": "creative",
+    "title": "Creative Luxe 4"
+  },
+  {
+    "id": "creative-5",
+    "category": "creative",
+    "title": "Creative Luxe 5"
+  },
+  {
+    "id": "creative-6",
+    "category": "creative",
+    "title": "Creative Luxe 6"
+  },
+  {
+    "id": "creative-7",
+    "category": "creative",
+    "title": "Creative Luxe 7"
+  },
+  {
+    "id": "creative-8",
+    "category": "creative",
+    "title": "Creative Luxe 8"
+  },
+  {
+    "id": "creative-9",
+    "category": "creative",
+    "title": "Creative Luxe 9"
+  },
+  {
+    "id": "creative-10",
+    "category": "creative",
+    "title": "Creative Luxe 10"
+  },
+  {
+    "id": "fitness-1",
+    "category": "fitness",
+    "title": "Fitness Luxe 1"
+  },
+  {
+    "id": "fitness-2",
+    "category": "fitness",
+    "title": "Fitness Luxe 2"
+  },
+  {
+    "id": "fitness-3",
+    "category": "fitness",
+    "title": "Fitness Luxe 3"
+  },
+  {
+    "id": "fitness-4",
+    "category": "fitness",
+    "title": "Fitness Luxe 4"
+  },
+  {
+    "id": "fitness-5",
+    "category": "fitness",
+    "title": "Fitness Luxe 5"
+  },
+  {
+    "id": "fitness-6",
+    "category": "fitness",
+    "title": "Fitness Luxe 6"
+  },
+  {
+    "id": "fitness-7",
+    "category": "fitness",
+    "title": "Fitness Luxe 7"
+  },
+  {
+    "id": "fitness-8",
+    "category": "fitness",
+    "title": "Fitness Luxe 8"
+  },
+  {
+    "id": "fitness-9",
+    "category": "fitness",
+    "title": "Fitness Luxe 9"
+  },
+  {
+    "id": "fitness-10",
+    "category": "fitness",
+    "title": "Fitness Luxe 10"
+  },
+  {
+    "id": "education-1",
+    "category": "education",
+    "title": "Education Luxe 1"
+  },
+  {
+    "id": "education-2",
+    "category": "education",
+    "title": "Education Luxe 2"
+  },
+  {
+    "id": "education-3",
+    "category": "education",
+    "title": "Education Luxe 3"
+  },
+  {
+    "id": "education-4",
+    "category": "education",
+    "title": "Education Luxe 4"
+  },
+  {
+    "id": "education-5",
+    "category": "education",
+    "title": "Education Luxe 5"
+  },
+  {
+    "id": "education-6",
+    "category": "education",
+    "title": "Education Luxe 6"
+  },
+  {
+    "id": "education-7",
+    "category": "education",
+    "title": "Education Luxe 7"
+  },
+  {
+    "id": "education-8",
+    "category": "education",
+    "title": "Education Luxe 8"
+  },
+  {
+    "id": "education-9",
+    "category": "education",
+    "title": "Education Luxe 9"
+  },
+  {
+    "id": "education-10",
+    "category": "education",
+    "title": "Education Luxe 10"
+  },
+  {
+    "id": "legal_finance-1",
+    "category": "legal_finance",
+    "title": "Legal_Finance Luxe 1"
+  },
+  {
+    "id": "legal_finance-2",
+    "category": "legal_finance",
+    "title": "Legal_Finance Luxe 2"
+  },
+  {
+    "id": "legal_finance-3",
+    "category": "legal_finance",
+    "title": "Legal_Finance Luxe 3"
+  },
+  {
+    "id": "legal_finance-4",
+    "category": "legal_finance",
+    "title": "Legal_Finance Luxe 4"
+  },
+  {
+    "id": "legal_finance-5",
+    "category": "legal_finance",
+    "title": "Legal_Finance Luxe 5"
+  },
+  {
+    "id": "legal_finance-6",
+    "category": "legal_finance",
+    "title": "Legal_Finance Luxe 6"
+  },
+  {
+    "id": "legal_finance-7",
+    "category": "legal_finance",
+    "title": "Legal_Finance Luxe 7"
+  },
+  {
+    "id": "legal_finance-8",
+    "category": "legal_finance",
+    "title": "Legal_Finance Luxe 8"
+  },
+  {
+    "id": "legal_finance-9",
+    "category": "legal_finance",
+    "title": "Legal_Finance Luxe 9"
+  },
+  {
+    "id": "legal_finance-10",
+    "category": "legal_finance",
+    "title": "Legal_Finance Luxe 10"
+  }
+]

@@ -1,0 +1,35 @@
+{
+  "mcpServers": {
+    "swift-sourcekit-lsp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@anvyx/swift-mcp-server"
+      ],
+      "env": {
+        "SOURCEKIT_TOOLCHAIN_PATH": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain"
+      }
+    },
+    "mobile-build-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@sentry/mobile-build-mcp"
+      ]
+    },
+    "xcodeproj-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "xcodeproj-mcp-server"
+      ]
+    },
+    "xcode-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "xcode-mcp-server"
+      ]
+    }
+  }
+}

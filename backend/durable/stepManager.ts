@@ -1,0 +1,1 @@
+import fs from 'fs';import path from 'path';const F=path.join(process.cwd(),'cache','durable_steps.json');export function executeDurableStep(id:string,fn:()=>any){const db=fs.existsSync(F)?JSON.parse(fs.readFileSync(F,'utf-8')):{};if(db[id])return db[id];const res=fn();db[id]=res;fs.writeFileSync(F,JSON.stringify(db,null,2));return res;}

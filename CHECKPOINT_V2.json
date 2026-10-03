@@ -1,0 +1,18 @@
+{
+  "checkpoint": "v2",
+  "version": "2.0.0",
+  "timestamp": "2026-09-21T16:39:00-07:00",
+  "summary": "CODGAR AI Agent v2.0 - Stabilized Full UI Layout & Harmonious Liquid Glass Design",
+  "features": {
+    "sidebar": {
+      "terminal_button": "Direct toggle for terminal logs & execution traces (TerminalPanel)",
+      "preview_button": "Direct toggle for interactive live application preview (LiveArtifactPreview)"
+    },
+    "chat_card": {
+      "dimensions": "Expanded width (96% / max-1380px) & height (85vh / max-880px)",
+      "sticky_headers": "Sticky headers for code blocks and terminal output with instant copy buttons on scroll",
+      "bottom_input": "Harmonious light liquid glass background (bg-white/80 backdrop-blur-2xl) with semibold high-contrast text",
+      "date_badge": "Clean, minimal text display (e.g. ۲۱ شهریور • ۱۶:۳۵) with clock icon in harmonious slate-500 typography"
+    }
+  }
+}

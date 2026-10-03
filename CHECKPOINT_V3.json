@@ -1,0 +1,25 @@
+{
+  "checkpoint": "v3",
+  "version": "3.0.0",
+  "timestamp": "2026-09-21T17:46:00-07:00",
+  "summary": "CODGAR AI Agent v3.0 - Integrated Agent Skills, HIG Specs, Spatial XR, UE5/Unity Rules & Ice-Blue 3D Header",
+  "features": {
+    "agent_skills_and_standards": {
+      "categories": 5,
+      "total_repositories": 22,
+      "category_1": "Agent Skills Core & Guidelines (agentskills, vercel-labs, agent-skills-hub, jakubkrehel, joshuadavidthomas)",
+      "category_2": "Cross-Platform Rules & Prompts (awesome-cursorrules, cursor.directory, gregpr07)",
+      "category_3": "Desktop & 10-foot Experience HIG (windows-dev-docs, win32, GNOME HIG, KDE Plasma)",
+      "category_4": "Game Engines & 3D (Unreal Engine C++, UE5 Style Guide, Unity C#, 3D Math, UI Toolkit)",
+      "category_5": "Spatial XR & Embedded GUI (Unity XR, visionOS SwiftUI, LVGL Embedded, Slint Rust, JUCE C++)",
+      "test_endpoint": "/api/skills/standards/test"
+    },
+    "branding_header": {
+      "aesthetic": "Ice-Blue & Crystal-Cyan 3D Depth Gradients with white-on-blue bot icon",
+      "clean_typography": "High-contrast Playfair & Jakarta font pairings without cluttered labels"
+    },
+    "fuel_gauge_bubbles": {
+      "animation": "Ultra-smooth, slow-motion organic floating bubble movement with gentle scale & drift dynamics"
+    }
+  }
+}

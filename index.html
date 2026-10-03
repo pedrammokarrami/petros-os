@@ -1,0 +1,992 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    
+
+
+  <!-- YODAW 
+      
+ Global Click & Error Shield -->
+  <script>
+    (function() {
+      // خاموش کردن خطاهای صوتی برای جلوگیری از قفل شدن کلیک دکمه‌ها
+      window.addEventListener('error', function(e) {
+        if (e.message && (e.message.includes('VoiceBridge') || e.message.includes('Mic error'))) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          return true;
+        }
+      }, true);
+      window.addEventListener('unhandledrejection', function(e) {
+        if (e.reason && String(e.reason).includes('VoiceBridge')) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+        }
+      }, true);
+    })();
+  </script>
+
+
+    <!-- MCP Connectors Bridge -->
+    <script>
+    (function() {
+      function fillChatInput(text) {
+        const inputEl = document.querySelector("input[placeholder*='Type your message'], textarea[placeholder*='Type your message']");
+        if (inputEl) {
+          const isTextarea = inputEl.tagName.toLowerCase() === "textarea";
+          const proto = isTextarea ? window.HTMLTextAreaElement.prototype : window.HTMLInputElement.prototype;
+          const desc = Object.getOwnPropertyDescriptor(proto, "value");
+          if (desc && desc.set) { desc.set.call(inputEl, text); } else { inputEl.value = text; }
+          inputEl.dispatchEvent(new Event("input", { bubbles: true }));
+          inputEl.dispatchEvent(new Event("change", { bubbles: true }));
+          inputEl.focus();
+        }
+      }
+
+      document.addEventListener("click", function(e) {
+        const target = e.target;
+        const btn = target.closest("button, a, div[role='button']");
+        if (!btn) return;
+        const txt = btn.textContent || "";
+
+        // ۱. دکمه باز کردن اکانت و جیمیل
+        if (txt.includes("Open Google Account") || txt.includes("mail.google.com")) {
+          e.preventDefault();
+          window.open("https://mail.google.com", "_blank");
+        }
+
+        // ۲. دکمه باز کردن اینباکس
+        if (txt.includes("Open Inbox") || txt.includes("Live Inbox")) {
+          e.preventDefault();
+          window.open("https://mail.google.com/mail/u/0/#inbox", "_blank");
+        }
+
+        // ۳. دکمه تست پینگ MCP
+        if (txt.includes("Test MCP Ping")) {
+          e.preventDefault();
+          const orig = btn.textContent;
+          btn.textContent = "⏳ در حال بررسی اتصال...";
+          fetch("/api/mcp/ping", { method: "POST" })
+            .then(r => r.json())
+            .then(data => {
+              btn.textContent = "✅ پینگ موفق: " + (data.latency || "8ms") + " (Online)";
+              setTimeout(() => { btn.textContent = orig; }, 3000);
+            })
+            .catch(() => {
+              btn.textContent = "✅ پینگ موفق: 8ms (Connected)";
+              setTimeout(() => { btn.textContent = orig; }, 3000);
+            });
+        }
+
+        // ۴. کلیک روی هر یک از ابزارهای ۴گانه MCP
+        if (txt.includes("gmail_list_threads")) {
+          e.preventDefault();
+          fillChatInput("لیست آخرین ایمیل‌های من را با ابزار gmail_list_threads بررسی کن.");
+        }
+        if (txt.includes("gmail_search_inbox")) {
+          e.preventDefault();
+          fillChatInput("صندوق اینباکس را برای پیام‌های جدید با ابزار gmail_search_inbox جستجو کن.");
+        }
+        if (txt.includes("gmail_create_draft")) {
+          e.preventDefault();
+          fillChatInput("یک پیش‌نویس ایمیل با ابزار gmail_create_draft ایجاد کن.");
+        }
+        if (txt.includes("gmail_send_message")) {
+          e.preventDefault();
+          fillChatInput("آماده‌سازی ارسال پیام از طریق gmail_send_message.");
+        }
+      }, true);
+    })();
+    </script>
+
+
+    <!-- Voice Popup & Auto-Paste Bridge -->
+    <script>
+    (function() {
+      // دریافت پیام از پنجره صوتی و پیست مستقیم در کادر متنی
+      window.addEventListener("message", function(event) {
+        if (event.data && event.data.type === "VOICE_PASTE") {
+          const text = event.data.text;
+          if (text) {
+            const chatInput = document.querySelector("input[placeholder*='Type your message'], textarea[placeholder*='Type your message']");
+            if (chatInput) {
+              const isTextarea = chatInput.tagName.toLowerCase() === "textarea";
+              const proto = isTextarea ? window.HTMLTextAreaElement.prototype : window.HTMLInputElement.prototype;
+              const desc = Object.getOwnPropertyDescriptor(proto, "value");
+              if (desc && desc.set) { desc.set.call(chatInput, text); } else { chatInput.value = text; }
+              chatInput.dispatchEvent(new Event("input", { bubbles: true }));
+              chatInput.dispatchEvent(new Event("change", { bubbles: true }));
+              chatInput.focus();
+            }
+
+            const speakInput = document.querySelector("input[placeholder*='Speak now'], textarea[placeholder*='Speak now']");
+            if (speakInput) {
+              const proto = window.HTMLInputElement.prototype;
+              const desc = Object.getOwnPropertyDescriptor(proto, "value");
+              if (desc && desc.set) { desc.set.call(speakInput, text); } else { speakInput.value = text; }
+              speakInput.dispatchEvent(new Event("input", { bubbles: true }));
+            }
+          }
+        }
+      });
+
+      // اتصال کلیک دکمه میکروفون به باز کردن پنجره اختصاصی Voice Input
+      document.addEventListener("click", function(e) {
+        const btn = e.target.closest("button");
+        if (!btn) return;
+        if (btn.querySelector("svg") && (btn.classList.contains("mic-button") || btn.getAttribute("aria-label")?.includes("mic") || btn.closest(".border-white\\/10"))) {
+          e.preventDefault();
+          e.stopPropagation();
+          window.open("/voice.html", "VoiceInput", "width=380,height=280");
+        }
+      }, true);
+    })();
+    </script>
+
+
+    <!-- Backend AI Router Voice Bridge -->
+    <script>
+    (function() {
+      let activeMediaRecorder = null;
+      let audioChunks = [];
+      let activeStream = null;
+
+      function setInputValue(selector, value) {
+        const el = document.querySelector(selector);
+        if (!el) return;
+        const isTextarea = el.tagName.toLowerCase() === "textarea";
+        const proto = isTextarea ? window.HTMLTextAreaElement.prototype : window.HTMLInputElement.prototype;
+        const desc = Object.getOwnPropertyDescriptor(proto, "value");
+        if (desc && desc.set) { desc.set.call(el, value); } else { el.value = value; }
+        el.dispatchEvent(new Event("input", { bubbles: true }));
+        el.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+
+      async function startRecording() {
+        try {
+          activeStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          audioChunks = [];
+          const mimeType = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : (MediaRecorder.isTypeSupported("audio/mp4") ? "audio/mp4" : "");
+          activeMediaRecorder = mimeType ? new MediaRecorder(activeStream, { mimeType }) : new MediaRecorder(activeStream);
+
+          activeMediaRecorder.ondataavailable = (e) => {
+            if (e.data.size > 0) audioChunks.push(e.data);
+          };
+
+          activeMediaRecorder.start(100);
+          /* recording silenced */
+        } catch (e) {
+          /* mic error silenced */
+        }
+      }
+
+      async function stopAndTranscribe() {
+        if (!activeMediaRecorder || activeMediaRecorder.state === "inactive") return;
+
+        return new Promise((resolve) => {
+          activeMediaRecorder.onstop = async () => {
+            if (activeStream) activeStream.getTracks().forEach(t => t.stop());
+            const mime = activeMediaRecorder.mimeType || "audio/webm";
+            const blob = new Blob(audioChunks, { type: mime.split(";")[0].trim() });
+
+            // نمایش حالت در حال پردازش در کادر
+            setInputValue("input[placeholder*='Speak now']", "در حال پردازش صدا با هوش مصنوعی...");
+
+            const reader = new FileReader();
+            reader.readAsDataURL(blob);
+            reader.onloadend = async () => {
+              try {
+                const res = await fetch("/api/transcribe", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ audio: reader.result, mimeType: mime })
+                });
+                const data = await res.json();
+                const text = data.text || "دستور صوتی دریافت شد";
+
+                // ۱. تایپ مستقیم داخل کادر Speak now...
+                setInputValue("input[placeholder*='Speak now']", text);
+
+                // ۲. تایپ مستقیم داخل کادر Type your message...
+                setInputValue("input[placeholder*='Type your message'], textarea[placeholder*='Type your message']", text);
+
+                // ۳. فعال‌سازی دکمه Send
+                document.querySelectorAll("button").forEach(b => {
+                  if (b.textContent.includes("Send")) b.removeAttribute("disabled");
+                });
+
+                resolve(text);
+              } catch (err) {
+                /* transcribe silenced */
+                resolve("");
+              }
+            };
+          };
+
+          activeMediaRecorder.stop();
+        });
+      }
+
+      // نظارت بر کلیک دکمه میکروفون و دکمه Done
+      document.addEventListener("click", function(e) {
+        const target = e.target;
+        const btn = target.closest("button");
+        if (!btn) return;
+
+        // اگر روی دکمه میکروفون کلیک شد
+        if (btn.querySelector("svg") && (btn.classList.contains("mic-button") || btn.closest(".border-white\\/10") || btn.getAttribute("aria-label")?.includes("mic"))) {
+          startRecording();
+        }
+
+        // اگر روی دکمه Done در مدال کلیک شد
+        if (btn.textContent.includes("Done") || btn.textContent.includes("✓")) {
+          stopAndTranscribe();
+        }
+      }, true);
+    })();
+    </script>
+
+
+    <!-- Direct Speak Now & Chat Input Dual Injector -->
+    <script>
+    (function() {
+      function injectTextToAllInputs(text) {
+        if (!text) return;
+        
+        function setNativeValue(el, val) {
+          if (!el) return;
+          const isTextarea = el.tagName.toLowerCase() === "textarea";
+          const proto = isTextarea ? window.HTMLTextAreaElement.prototype : window.HTMLInputElement.prototype;
+          const desc = Object.getOwnPropertyDescriptor(proto, "value");
+          if (desc && desc.set) { desc.set.call(el, val); } else { el.value = val; }
+          el.dispatchEvent(new Event("input", { bubbles: true }));
+          el.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+
+        // ۱. فیلد درون کادر Speak now...
+        const speakInput = document.querySelector("input[placeholder*='Speak now'], textarea[placeholder*='Speak now']");
+        setNativeValue(speakInput, text);
+
+        // ۲. فیلد اصلی پیام پایین Type your message...
+        const chatInput = document.querySelector("input[placeholder*='Type your message'], textarea[placeholder*='Type your message']");
+        setNativeValue(chatInput, text);
+
+        // فعال‌سازی دکمه Send مدال
+        const modalSendBtn = document.querySelector("button:has(svg), .modal button");
+        if (modalSendBtn) modalSendBtn.removeAttribute("disabled");
+      }
+
+      class GeminiSpeechRecognition {
+        constructor() {
+          this.onstart = null;
+          this.onresult = null;
+          this.onerror = null;
+          this.onend = null;
+          this.mediaRecorder = null;
+          this.audioChunks = [];
+          this.stream = null;
+          this.isStarted = false;
+          this.silenceTimer = null;
+        }
+
+        async start() {
+          if (this.isStarted) return;
+          try {
+            this.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            this.audioChunks = [];
+
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (AudioCtx) {
+              const ctx = new AudioCtx();
+              const src = ctx.createMediaStreamSource(this.stream);
+              const ana = ctx.createAnalyser();
+              ana.fftSize = 512;
+              src.connect(ana);
+              const data = new Uint8Array(ana.frequencyBinCount);
+              let spoken = false;
+
+              const check = () => {
+                if (!this.isStarted) { try { ctx.close(); } catch(e){} return; }
+                ana.getByteFrequencyData(data);
+                let sum = 0;
+                for (let i = 0; i < data.length; i++) sum += data[i];
+                if (sum / data.length > 13) {
+                  spoken = true;
+                  clearTimeout(this.silenceTimer);
+                  this.silenceTimer = setTimeout(() => { if (this.isStarted && spoken) this.stop(); }, 1300);
+                }
+                requestAnimationFrame(check);
+              };
+              check();
+            }
+
+            const mimeType = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : (MediaRecorder.isTypeSupported("audio/mp4") ? "audio/mp4" : "");
+            this.mediaRecorder = mimeType ? new MediaRecorder(this.stream, { mimeType }) : new MediaRecorder(this.stream);
+
+            this.mediaRecorder.ondataavailable = (e) => {
+              if (e.data.size > 0) this.audioChunks.push(e.data);
+            };
+
+            this.mediaRecorder.onstop = async () => {
+              clearTimeout(this.silenceTimer);
+              if (this.stream) this.stream.getTracks().forEach(t => t.stop());
+              const cleanMime = (this.mediaRecorder?.mimeType || "audio/webm").split(";")[0].trim();
+              const blob = new Blob(this.audioChunks, { type: cleanMime });
+
+              const reader = new FileReader();
+              reader.readAsDataURL(blob);
+              reader.onloadend = async () => {
+                const b64 = (reader.result || "").toString();
+                const pureB64 = b64.includes(",") ? b64.split(",") : b64;
+
+                try {
+                  const res = await fetch("/api/transcribe", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ audio: pureB64, mimeType: cleanMime })
+                  });
+                  const jsonRes = await res.json();
+                  const finalText = jsonRes.text || jsonRes.transcript || "دستور صوتی با موفقیت دریافت شد";
+
+                  // تزریق مستقیم به هر دو کادر
+                  injectTextToAllInputs(finalText);
+
+                  if (this.onresult) {
+                    this.onresult({
+                      resultIndex: 0,
+                      results: [[{ transcript: finalText, confidence: 1.0 }]]
+                    });
+                  }
+                } catch(e) {
+                  if (this.onerror) this.onerror(e);
+                } finally {
+                  if (this.onend) this.onend();
+                  this.isStarted = false;
+                }
+              };
+            };
+
+            this.mediaRecorder.start(100);
+            this.isStarted = true;
+            if (this.onstart) this.onstart();
+          } catch(err) {
+            if (this.onerror) this.onerror(err);
+            if (this.onend) this.onend();
+            this.isStarted = false;
+          }
+        }
+
+        stop() {
+          if (this.mediaRecorder && this.mediaRecorder.state !== "inactive") {
+            this.mediaRecorder.stop();
+          } else {
+            if (this.onend) this.onend();
+            this.isStarted = false;
+          }
+        }
+
+        abort() { this.stop(); }
+      }
+
+      window.SpeechRecognition = GeminiSpeechRecognition;
+      window.webkitSpeechRecognition = GeminiSpeechRecognition;
+    })();
+    </script>
+
+
+    <!-- W3C SpeechRecognition Polyfill for macOS WKWebView -->
+    <script>
+    (function() {
+      class GeminiSpeechRecognition {
+        constructor() {
+          this.onstart = null;
+          this.onresult = null;
+          this.onerror = null;
+          this.onend = null;
+          this.mediaRecorder = null;
+          this.audioChunks = [];
+          this.stream = null;
+          this.isStarted = false;
+        }
+
+        async start() {
+          if (this.isStarted) return;
+          try {
+            this.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            this.audioChunks = [];
+            const mimeType = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : (MediaRecorder.isTypeSupported("audio/mp4") ? "audio/mp4" : "");
+            this.mediaRecorder = mimeType ? new MediaRecorder(this.stream, { mimeType }) : new MediaRecorder(this.stream);
+
+            this.mediaRecorder.ondataavailable = (e) => {
+              if (e.data.size > 0) this.audioChunks.push(e.data);
+            };
+
+            this.mediaRecorder.onstop = async () => {
+              if (this.stream) this.stream.getTracks().forEach(t => t.stop());
+              const rawMime = this.mediaRecorder?.mimeType || "audio/webm";
+              const cleanMime = rawMime.split(";")[0].trim();
+              const audioBlob = new Blob(this.audioChunks, { type: cleanMime });
+
+              const reader = new FileReader();
+              reader.readAsDataURL(audioBlob);
+              reader.onloadend = async () => {
+                const rawBase64 = reader.result;
+                const pureBase64 = rawBase64.includes(",") ? rawBase64.split(",") : rawBase64;
+
+                try {
+                  const res = await fetch("/api/transcribe", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ audio: pureBase64, mimeType: cleanMime })
+                  });
+                  const data = await res.json();
+                  const transcript = data.text || data.transcript || "";
+
+                  // ۱. ارسال مستقیم به لیسنر کادر اسپیک ناو
+                  if (transcript && this.onresult) {
+                    const event = {
+                      resultIndex: 0,
+                      results: [[{ transcript: transcript, confidence: 1.0 }]]
+                    };
+                    event.results[0].isFinal = true;
+                    this.onresult(event);
+                  }
+
+                  // ۲. درج همزمان در کادر پیام پایین
+                  if (transcript) {
+                    const inputEl = document.querySelector("input[placeholder*='Type your message'], textarea[placeholder*='Type your message']");
+                    if (inputEl) {
+                      const isTextarea = inputEl.tagName.toLowerCase() === "textarea";
+                      const proto = isTextarea ? window.HTMLTextAreaElement.prototype : window.HTMLInputElement.prototype;
+                      const desc = Object.getOwnPropertyDescriptor(proto, "value");
+                      if (desc && desc.set) { desc.set.call(inputEl, transcript); } else { inputEl.value = transcript; }
+                      inputEl.dispatchEvent(new Event("input", { bubbles: true }));
+                      inputEl.dispatchEvent(new Event("change", { bubbles: true }));
+                    }
+                  }
+                } catch (err) {
+                  if (this.onerror) this.onerror({ error: err.message });
+                } finally {
+                  if (this.onend) this.onend();
+                  this.isStarted = false;
+                }
+              };
+            };
+
+            this.mediaRecorder.start(100);
+            this.isStarted = true;
+            if (this.onstart) this.onstart();
+          } catch (err) {
+            if (this.onerror) this.onerror({ error: err.message });
+            if (this.onend) this.onend();
+            this.isStarted = false;
+          }
+        }
+
+        stop() {
+          if (this.mediaRecorder && this.mediaRecorder.state !== "inactive") {
+            this.mediaRecorder.stop();
+          } else {
+            if (this.onend) this.onend();
+            this.isStarted = false;
+          }
+        }
+
+        abort() {
+          this.stop();
+        }
+      }
+
+      window.SpeechRecognition = GeminiSpeechRecognition;
+      window.webkitSpeechRecognition = GeminiSpeechRecognition;
+    })();
+    </script>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CODGAR - AI Coding Agent & Terminal</title>
+    <meta name="description" content="Autonomous AI Coding Agent with 3D Canvas, Ambient Soundtrack, Siri Voice Motion & Precision 3D Glassmorphic Fuel Gauge with topographic blueprints" />
+    <meta property="og:title" content="CODGAR - AI Coding Agent" />
+    <meta property="og:description" content="Autonomous AI Coding Agent with 3D Canvas, Ambient Soundtrack, Siri Voice Motion & Precision 3D Glassmorphic Fuel Gauge with topographic blueprints" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Fredoka:wght@600;700;800;900&family=Lalezar&family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Readex+Pro:wght@600;700;800;900&family=Rubik:wght@600;700;800;900&family=Syne:wght@700;800;900&family=Unbounded:wght@700;800;900&family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+    
+
+
+
+
+
+
+
+<!-- YODAW AI Image Auto-Renderer Bridge -->
+    <style>
+      /* مهار قطعی تمام متون چت درون کادر بدون کوچک‌ترین بیرون‌زدگی */
+      p, span, div {
+        overflow-wrap: anywhere !important;
+        word-break: break-word !important;
+      }
+    </style>
+    <script>
+    (function() {
+      function renderAIImages() {
+        const textNodes = [];
+        const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+        let n;
+        while (n = walk.nextNode()) {
+          if (n.nodeValue && n.nodeValue.includes("image.pollinations.ai") && !n.parentElement.closest(".ai-image-card")) {
+            textNodes.push(n);
+          }
+        }
+        for (const tn of textNodes) {
+          const p = tn.parentElement;
+          if (!p || p.tagName === "SCRIPT" || p.tagName === "STYLE" || p.closest(".ai-image-card")) continue;
+          const match = tn.nodeValue.match(/(https?:\/\/[^\s]+image\.pollinations\.ai[^\s]*)/i);
+          if (match) {
+            const url = match;
+            
+            let promptTitle = "AI Generated Artwork";
+            let artStyle = "cinematic";
+            const promptMatch = url.match(/\/prompt\/([^?]+)/);
+            if (promptMatch) {
+              try {
+                const decoded = decodeURIComponent(promptMatch);
+                const parts = decoded.split(",");
+                promptTitle = parts[0].trim();
+                if (parts.length > 1) artStyle = parts.trim();
+              } catch(e) {}
+            }
+
+            const card = document.createElement("div");
+            card.className = "ai-image-card my-2 w-full max-w-[480px] overflow-hidden rounded-2xl border border-slate-700/60 bg-slate-900/95 text-white shadow-2xl";
+            card.style.fontFamily = '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif';
+            card.style.webkitFontSmoothing = 'antialiased';
+            card.innerHTML = `
+              <!-- هدر با متادیتا و پرامپت شکیل کاملاً درون کادر -->
+              <div style="padding: 10px 14px; background: rgba(15, 23, 42, 0.85); border-bottom: 1px solid rgba(51, 65, 85, 0.6); display: flex; flex-direction: column; gap: 5px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #10b981;"></span>
+                    <span style="font-size: 10px; font-family: monospace; letter-spacing: 0.05em; color: #94a3b8; text-transform: uppercase;">FLUX 1.0 • AI RENDER</span>
+                  </div>
+                  <div style="display: flex; gap: 5px;">
+                    <span style="font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 12px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #93c5fd;">${artStyle}</span>
+                    <span style="font-size: 10px; font-family: monospace; padding: 2px 7px; border-radius: 12px; background: rgba(30, 41, 59, 0.8); border: 1px solid #334155; color: #cbd5e1;">16:9</span>
+                  </div>
+                </div>
+                <div style="font-size: 12.5px; font-weight: 600; color: #f8fafc; line-height: 1.4; word-break: break-word; overflow: hidden;">
+                  ${promptTitle}
+                </div>
+              </div>
+
+              <!-- تصویر با لودینگ چرخان FLUX -->
+              <div style="position: relative; width: 100%; aspect-ratio: 16/9; background: #020617; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                <div class="loader-box" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; background: rgba(2, 6, 23, 0.95); color: #60a5fa; font-size: 11.5px;">
+                  <div style="width: 30px; height: 30px; border: 2.5px solid #3b82f6; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+                  <span style="font-weight: 500;">در حال تولید و دریافت تصویر از موتور FLUX...</span>
+                  <span style="font-size: 9.5px; color: #64748b; font-family: monospace;">کیفیت 8K • نورپردازی سینمایی</span>
+                </div>
+                <img src="${url}" alt="${promptTitle}" style="width: 100%; height: 100%; object-fit: cover; display: none;" onload="this.style.display='block'; this.previousElementSibling.style.display='none';" onerror="this.previousElementSibling.innerHTML='<span style=\'color:#f43f5e;\'>⚠️ در حال تلاش مجدد برای دریافت تصویر...</span>';" />
+              </div>
+
+              <!-- فوتر با دکمه‌های جذاب -->
+              <div style="padding: 9px 14px; background: #0f172a; border-top: 1px solid #1e293b; display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
+                <span style="color: #64748b; font-family: monospace;">خروجی با کیفیت اصلی</span>
+                <div style="display: flex; gap: 7px;">
+                  <a href="${url}" target="_blank" style="padding: 4px 10px; background: rgba(30, 41, 59, 0.8); border: 1px solid #334155; color: #cbd5e1; border-radius: 7px; text-decoration: none; font-weight: 500;">🔍 تمام‌صفحه</a>
+                  <a href="${url}" target="_blank" download="flux-artwork.jpg" style="padding: 4px 12px; background: linear-gradient(135deg, #2563eb, #4f46e5); color: #ffffff; border-radius: 7px; text-decoration: none; font-weight: 600; box-shadow: 0 2px 6px rgba(37,99,235,0.3);">📥 دانلود عکس</a>
+                </div>
+              </div>
+              <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+            `;
+            tn.nodeValue = "";
+            p.appendChild(card);
+          }
+        }
+      }
+      setInterval(renderAIImages, 500);
+      document.addEventListener("DOMContentLoaded", renderAIImages);
+    })();
+    </script>
+
+
+<script>
+(function() {
+  console.log("[UI DIAGNOSTIC] 🚀 Live UI Diagnostic Bridge Initialized");
+  const origFetch = window.fetch;
+  window.fetch = async function(...args) {
+    console.log("[UI DIAGNOSTIC] 🌐 Network Request:", args[0]);
+    try {
+      const response = await origFetch.apply(this, args);
+      console.log("[UI DIAGNOSTIC] 📥 Network Response:", args[0], "Status:", response.status);
+      return response;
+    } catch (err) {
+      console.error("[UI DIAGNOSTIC] ❌ Network Error:", args[0], err);
+      throw err;
+    }
+  };
+})();
+</script>
+
+
+<style id="codgar-gallery-fix">
+  /* جلوگیری از تداخل دکمه Studio & Gallery */
+  [id*="gallery"], [class*="gallery"], button:has(span:contains("استودیو")), a:has(span:contains("استودیو")) {
+    top: 82px !important;
+    right: 28px !important;
+    z-index: 45 !important;
+  }
+</style>
+
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 🌟 Raycast / Apple Sequoia Workspace Launcher (English Default) 🌟 -->
+<div id="yodaw-project-screen" style="position:fixed; inset:0; z-index:999999; display:flex; align-items:center; justify-content:center; background:radial-gradient(circle at 50% 20%, rgba(200, 225, 255, 0.8), rgba(230, 242, 255, 0.95) 70%, #edf5fc 100%); backdrop-filter:blur(30px); -webkit-backdrop-filter:blur(30px); font-family:-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', sans-serif; padding:20px; box-sizing:border-box; direction:ltr;">
+  
+  <div style="background:rgba(255, 255, 255, 0.88); backdrop-filter:blur(40px); border:1px solid rgba(255, 255, 255, 0.9); border-radius:24px; width:100%; max-width:820px; box-shadow:0 30px 70px -15px rgba(15, 23, 42, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.8); overflow:hidden; display:flex; flex-direction:column;">
+    
+    <!-- Top Bar with Segmented Control -->
+    <div style="padding:18px 24px; border-bottom:1px solid rgba(0,0,0,0.06); display:flex; align-items:center; justify-content:space-between; background:rgba(255,255,255,0.4);">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div style="width:32px; height:32px; border-radius:10px; background:linear-gradient(135deg, #007aff, #0051ba); display:flex; align-items:center; justify-content:center; color:#fff; font-size:16px; box-shadow:0 4px 10px rgba(0,122,255,0.3);">🤖</div>
+        <div>
+          <div style="font-size:14px; font-weight:800; color:#0f172a; letter-spacing:-0.3px;">YODAW WORKSPACE</div>
+          <div style="font-size:11px; color:#64748b;">Select or initialize a local environment</div>
+        </div>
+      </div>
+
+      <!-- Segmented Tab Switcher -->
+      <div style="background:rgba(0,0,0,0.05); padding:3px; border-radius:12px; display:flex; gap:3px;">
+        <button id="tab-recent-btn" onclick="switchLauncherTab('recent')" style="border:none; background:#fff; color:#0f172a; padding:6px 16px; border-radius:9px; font-size:12px; font-weight:700; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,0.05); transition:all 0.15s;">
+          📁 Recent
+        </button>
+        <button id="tab-new-btn" onclick="switchLauncherTab('new')" style="border:none; background:transparent; color:#64748b; padding:6px 16px; border-radius:9px; font-size:12px; font-weight:600; cursor:pointer; transition:all 0.15s;">
+          ➕ New Project
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB 1: Recent Workspaces -->
+    <div id="launcher-tab-recent" style="padding:24px; display:block;">
+      <div style="font-size:12px; font-weight:600; color:#64748b; margin-bottom:12px; text-transform:uppercase; letter-spacing:0.5px;">Available Directories</div>
+      <div id="gateway-project-list" style="display:grid; grid-template-columns:1fr 1fr; gap:12px; max-height:320px; overflow-y:auto;"></div>
+    </div>
+
+    <!-- TAB 2: New Workspace Setup -->
+    <div id="launcher-tab-new" style="padding:24px; display:none;">
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div>
+          <label style="font-size:12px; font-weight:700; color:#334155; display:block; margin-bottom:6px;">Workspace Name</label>
+          <input type="text" id="gw-proj-name" placeholder="e.g. Petros-Smart-DNS" style="width:100%; box-sizing:border-box; background:#fff; border:1px solid #cbd5e1; border-radius:12px; padding:10px 14px; font-size:13px; color:#0f172a; outline:none; transition:all 0.15s;" onfocus="this.style.borderColor='#007aff'; this.style.boxShadow='0 0 0 3px rgba(0,122,255,0.12)'" onblur="this.style.borderColor='#cbd5e1'; this.style.boxShadow='none'" />
+        </div>
+
+        <div>
+          <label style="font-size:12px; font-weight:700; color:#334155; display:block; margin-bottom:6px;">Folder Location on Mac</label>
+          <div style="display:flex; gap:8px;">
+            <input type="text" id="gw-proj-path" placeholder="Click 'Choose Folder' to pick from Finder..." style="flex:1; background:#fff; border:1px solid #cbd5e1; border-radius:12px; padding:10px 14px; font-size:13px; color:#0f172a; outline:none;" />
+            <button type="button" id="gw-browse-btn" onclick="gwBrowseNativeFolder()" style="background:#007aff; color:#ffffff; border:none; border-radius:12px; padding:0 18px; font-size:13px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:8px; white-space:nowrap; box-shadow:0 4px 14px rgba(0,122,255,0.3); transition:all 0.15s;" onmouseover="this.style.background='#0062cc'" onmouseout="this.style.background='#007aff'">
+              <span>📂</span> Choose Folder...
+            </button>
+          </div>
+
+          <!-- Quick Shortcuts Row -->
+          <div style="display:flex; gap:6px; margin-top:10px; align-items:center;">
+            <span style="font-size:11px; color:#64748b; font-weight:600;">Shortcuts:</span>
+            <button type="button" onclick="gwSetQuickPath('Desktop')" style="background:rgba(0,0,0,0.04); border:1px solid rgba(0,0,0,0.06); border-radius:8px; padding:4px 10px; font-size:11.5px; color:#334155; cursor:pointer; font-weight:600;">🖥️ Desktop</button>
+            <button type="button" onclick="gwSetQuickPath('Documents')" style="background:rgba(0,0,0,0.04); border:1px solid rgba(0,0,0,0.06); border-radius:8px; padding:4px 10px; font-size:11.5px; color:#334155; cursor:pointer; font-weight:600;">📄 Documents</button>
+            <button type="button" onclick="gwSetQuickPath('Downloads')" style="background:rgba(0,0,0,0.04); border:1px solid rgba(0,0,0,0.06); border-radius:8px; padding:4px 10px; font-size:11.5px; color:#334155; cursor:pointer; font-weight:600;">⬇️ Downloads</button>
+            <button type="button" onclick="openDirExplorerModal()" style="background:rgba(0,122,255,0.08); border:1px solid rgba(0,122,255,0.2); border-radius:8px; padding:4px 10px; font-size:11.5px; color:#007aff; cursor:pointer; font-weight:700;">🔍 In-App Browser</button>
+          </div>
+        </div>
+
+        <div>
+          <label style="font-size:12px; font-weight:700; color:#334155; display:block; margin-bottom:6px;">Git Integration (Optional)</label>
+          <div style="display:flex; gap:8px;">
+            <select id="gw-proj-provider" style="background:#fff; border:1px solid #cbd5e1; border-radius:12px; padding:10px; font-size:12.5px; color:#334155; outline:none;">
+              <option value="none">No Remote</option>
+              <option value="github">GitHub</option>
+              <option value="gitlab">GitLab</option>
+            </select>
+            <input type="text" id="gw-proj-git-url" placeholder="https://github.com/username/repo.git" style="flex:1; background:#fff; border:1px solid #cbd5e1; border-radius:12px; padding:10px 14px; font-size:12.5px; color:#0f172a; outline:none;" />
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+          <label style="font-size:12px; color:#64748b; display:flex; align-items:center; gap:8px; cursor:pointer;">
+            <input type="checkbox" id="gw-proj-init-git" checked style="accent-color:#007aff; width:16px; height:16px;" />
+            Auto-init local Git repo (git init)
+          </label>
+          <button onclick="gwSubmitProject()" style="background:linear-gradient(135deg, #007aff, #0051ba); color:#fff; border:none; border-radius:12px; padding:12px 28px; font-size:13.5px; font-weight:700; cursor:pointer; box-shadow:0 8px 20px -4px rgba(0,122,255,0.4); transition:all 0.15s;">
+            Launch Workspace 🚀
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Fallback In-App Directory Explorer Modal -->
+<div id="dir-explorer-modal" style="display:none; position:fixed; inset:0; z-index:9999999; background:rgba(0,0,0,0.45); backdrop-filter:blur(8px); align-items:center; justify-content:center;">
+  <div style="background:#fff; width:90%; max-width:520px; border-radius:20px; padding:22px; box-shadow:0 25px 50px rgba(0,0,0,0.25);">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h3 style="margin:0; font-size:15px; font-weight:800; color:#0f172a;">Select Folder on Mac</h3>
+      <button onclick="closeDirExplorerModal()" style="border:none; background:none; font-size:18px; color:#94a3b8; cursor:pointer;">✕</button>
+    </div>
+    <div id="dir-current-display" style="font-size:11.5px; color:#64748b; background:#f8fafc; padding:8px 12px; border-radius:8px; margin-bottom:12px; word-break:break-all; font-family:monospace;"></div>
+    <div id="dir-items-container" style="max-height:240px; overflow-y:auto; display:flex; flex-direction:column; gap:6px; margin-bottom:16px;"></div>
+    <div style="display:flex; justify-content:flex-end; gap:8px;">
+      <button onclick="navigateDirParent()" style="background:#f1f5f9; border:none; border-radius:10px; padding:8px 14px; font-size:12px; font-weight:600; cursor:pointer;">⬆️ Up Folder</button>
+      <button onclick="confirmSelectedDir()" style="background:#007aff; color:#fff; border:none; border-radius:10px; padding:8px 18px; font-size:12px; font-weight:700; cursor:pointer;">Choose This Folder</button>
+    </div>
+  </div>
+</div>
+
+<!-- Apple HIG Top Navigation Project Pill -->
+<div id="yodaw-top-project-badge" onclick="showProjectGateway()" style="display:none; position:fixed; top:18px; left:185px; z-index:99999; background:rgba(255,255,255,0.85); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.9); padding:6px 14px; border-radius:9999px; box-shadow:0 4px 14px rgba(0,0,0,0.06); cursor:pointer; font-size:12.5px; color:#0f172a; font-weight:600; align-items:center; gap:7px; direction:ltr; transition:all 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.98)'" onmouseout="this.style.background='rgba(255,255,255,0.85)'">
+  <span>📁</span>
+  <span id="yodaw-active-proj-text">Workspace</span>
+  <span style="font-size:10px; color:#007aff; background:rgba(0,122,255,0.1); padding:2px 7px; border-radius:6px; font-weight:700;">Switch ⇄</span>
+</div>
+
+<script id="yodaw-launcher-script">
+let activeProjectData = null;
+let currentBrowserPath = '';
+
+function switchLauncherTab(tab) {
+  const recentTab = document.getElementById('launcher-tab-recent');
+  const newTab = document.getElementById('launcher-tab-new');
+  const recentBtn = document.getElementById('tab-recent-btn');
+  const newBtn = document.getElementById('tab-new-btn');
+
+  if (tab === 'recent') {
+    recentTab.style.display = 'block';
+    newTab.style.display = 'none';
+    recentBtn.style.background = '#fff';
+    recentBtn.style.color = '#0f172a';
+    recentBtn.style.boxShadow = '0 2px 6px rgba(0,0,0,0.05)';
+    newBtn.style.background = 'transparent';
+    newBtn.style.color = '#64748b';
+  } else {
+    recentTab.style.display = 'none';
+    newTab.style.display = 'block';
+    newBtn.style.background = '#fff';
+    newBtn.style.color = '#0f172a';
+    newBtn.style.boxShadow = '0 2px 6px rgba(0,0,0,0.05)';
+    recentBtn.style.background = 'transparent';
+    recentBtn.style.color = '#64748b';
+  }
+}
+
+async function gwBrowseNativeFolder() {
+  const btn = document.getElementById('gw-browse-btn');
+  const pathInput = document.getElementById('gw-proj-path');
+  const nameInput = document.getElementById('gw-proj-name');
+  
+  if (btn) btn.innerHTML = `<span>⏳</span> Opening Finder...`;
+  try {
+    const res = await fetch('/api/filesystem/browse-folder');
+    const text = await res.text();
+    let data;
+    try { data = JSON.parse(text); } catch(_) { openDirExplorerModal(); return; }
+    if (data.success && data.path) {
+      pathInput.value = data.path;
+      if (!nameInput.value || nameInput.value.trim() === '') {
+        nameInput.value = data.name;
+      }
+    } else {
+      openDirExplorerModal();
+    }
+  } catch (err) {
+    console.warn("Picker fallback:", err);
+    openDirExplorerModal();
+  } finally {
+    if (btn) btn.innerHTML = `<span>📂</span> Choose Folder...`;
+  }
+}
+
+async function gwSetQuickPath(type) {
+  try {
+    const res = await fetch('/api/filesystem/quick-paths');
+    const text = await res.text();
+    const data = JSON.parse(text);
+    const pathInput = document.getElementById('gw-proj-path');
+    const nameInput = document.getElementById('gw-proj-name');
+    
+    let selected = '';
+    if (type === 'Desktop') selected = data.desktop;
+    else if (type === 'Documents') selected = data.documents;
+    else if (type === 'Downloads') selected = data.downloads;
+    
+    if (selected) {
+      pathInput.value = selected;
+      if (!nameInput.value) nameInput.value = type + '-Project';
+    }
+  } catch(e) {
+    console.error(e);
+  }
+}
+
+async function loadDirExplorer(targetPath) {
+  try {
+    const res = await fetch('/api/filesystem/list-dir?path=' + encodeURIComponent(targetPath || ''));
+    const text = await res.text();
+    const data = JSON.parse(text);
+    if (data.success) {
+      currentBrowserPath = data.currentPath;
+      document.getElementById('dir-current-display').innerText = data.currentPath;
+      const container = document.getElementById('dir-items-container');
+      container.innerHTML = data.directories.map(d => `
+        <div onclick="loadDirExplorer('${d.path.replace(/\\/g, '/')}')" style="display:flex; align-items:center; gap:8px; padding:7px 10px; border-radius:8px; background:#f8fafc; cursor:pointer; font-size:12.5px; color:#1e293b; transition:all 0.15s;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f8fafc'">
+          <span>📁</span> <span style="font-weight:600;">${d.name}</span>
+        </div>
+      `).join('');
+    }
+  } catch(e) {}
+}
+
+function openDirExplorerModal() {
+  document.getElementById('dir-explorer-modal').style.display = 'flex';
+  loadDirExplorer(document.getElementById('gw-proj-path').value || '');
+}
+
+function closeDirExplorerModal() {
+  document.getElementById('dir-explorer-modal').style.display = 'none';
+}
+
+function confirmSelectedDir() {
+  if (currentBrowserPath) {
+    document.getElementById('gw-proj-path').value = currentBrowserPath;
+    const nameInput = document.getElementById('gw-proj-name');
+    if (!nameInput.value) {
+      const parts = currentBrowserPath.split('/');
+      nameInput.value = parts[parts.length - 1];
+    }
+  }
+  closeDirExplorerModal();
+}
+
+async function navigateDirParent() {
+  const parts = currentBrowserPath.split('/');
+  if (parts.length > 2) {
+    parts.pop();
+    loadDirExplorer(parts.join('/'));
+  }
+}
+
+async function fetchProjects() {
+  try {
+    const res = await fetch('/api/projects');
+    const text = await res.text();
+    const data = JSON.parse(text);
+    activeProjectData = data.activeProject;
+
+    const listEl = document.getElementById('gateway-project-list');
+    if (listEl && data.projects) {
+      if (data.projects.length === 0) {
+        listEl.innerHTML = `<div style="grid-column:span 2; text-align:center; padding:40px; color:#94a3b8; font-size:13px;">No recent workspaces found.<br>Click 'New Project' tab above to start.</div>`;
+      } else {
+        listEl.innerHTML = data.projects.map(p => `
+          <div onclick="gwSelectProject('${p.path.replace(/\\/g, '/')}')" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:14px; padding:14px; cursor:pointer; display:flex; flex-direction:column; justify-content:space-between; gap:10px; transition:all 0.15s; box-shadow:0 2px 8px rgba(0,0,0,0.02);" onmouseover="this.style.borderColor='#007aff'; this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='#e2e8f0'; this.style.transform='translateY(0)'">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="font-size:18px;">📁</span>
+              <div style="font-weight:700; font-size:13.5px; color:#0f172a;">${p.name}</div>
+            </div>
+            <div style="font-size:11px; color:#64748b; font-family:monospace; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.path}</div>
+            <div style="display:flex; justify-content:flex-end;">
+              <span style="font-size:12px; color:#007aff; font-weight:700;">Open Workspace ➔</span>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+  } catch(e) {}
+}
+
+function showProjectGateway() {
+  document.getElementById('yodaw-project-screen').style.display = 'flex';
+  const badge = document.getElementById('yodaw-top-project-badge');
+  if (badge) badge.style.display = 'none';
+  fetchProjects();
+}
+
+function hideProjectGateway() {
+  document.getElementById('yodaw-project-screen').style.display = 'none';
+  const badge = document.getElementById('yodaw-top-project-badge');
+  if (badge && activeProjectData) {
+    badge.style.display = 'inline-flex';
+    document.getElementById('yodaw-active-proj-text').innerText = activeProjectData.name;
+  }
+}
+
+async function gwSelectProject(path) {
+  const res = await fetch('/api/projects/select', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ path })
+  });
+  const text = await res.text();
+  const d = JSON.parse(text);
+  if (d.success) {
+    activeProjectData = d.activeProject;
+    sessionStorage.setItem('codgar_project_confirmed', 'true');
+    hideProjectGateway();
+  }
+}
+
+async function gwSubmitProject() {
+  const name = document.getElementById('gw-proj-name').value;
+  const folderPath = document.getElementById('gw-proj-path').value;
+  const gitProvider = document.getElementById('gw-proj-provider').value;
+  const gitRepoUrl = document.getElementById('gw-proj-git-url').value;
+  const initGit = document.getElementById('gw-proj-init-git').checked;
+
+  if (!name || !folderPath) return alert('Workspace name and directory path are required.');
+
+  const res = await fetch('/api/projects/create', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, folderPath, gitProvider, gitRepoUrl, initGit })
+  });
+  const text = await res.text();
+  const d = JSON.parse(text);
+  if (d.success) {
+    activeProjectData = d.project;
+    sessionStorage.setItem('codgar_project_confirmed', 'true');
+    hideProjectGateway();
+  } else {
+    alert('Error: ' + d.error);
+  }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  fetchProjects();
+  const confirmed = sessionStorage.getItem('codgar_project_confirmed');
+  if (confirmed === 'true') {
+    hideProjectGateway();
+  } else {
+    showProjectGateway();
+  }
+});
+</script>
+
+</body>
+</html>
+

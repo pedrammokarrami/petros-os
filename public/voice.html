@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>Voice Input</title>
+  <style>
+    body {
+      background: #090d16;
+      color: white;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      padding: 16px;
+      box-sizing: border-box;
+      user-select: none;
+    }
+    .mic-ring {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: #ef4444;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      box-shadow: 0 0 25px rgba(239, 68, 68, 0.6);
+      cursor: pointer;
+      animation: pulse 1.5s infinite;
+      margin-bottom: 12px;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.08); box-shadow: 0 0 35px rgba(239, 68, 68, 0.9); }
+      100% { transform: scale(1); }
+    }
+    .status {
+      font-size: 13px;
+      color: #94a3b8;
+      margin-bottom: 12px;
+    }
+    .transcript-box {
+      width: 90%;
+      height: 55px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      color: #38bdf8;
+      padding: 8px;
+      font-size: 13px;
+      resize: none;
+      text-align: right;
+      margin-bottom: 12px;
+      outline: none;
+    }
+    .btn {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 7px 18px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="mic-ring" id="micBtn">🎤</div>
+  <div class="status" id="statusLabel">در حال شنیدن... صحبت کنید</div>
+  <textarea class="transcript-box" id="resultText" placeholder="متن صدا پس از پردازش اینجا قرار می‌گیرد..."></textarea>
+  <button class="btn" id="finishBtn">تایید و پیست در برنامه</button>
+
+  <script>
+    let mediaRecorder = null;
+    let chunks = [];
+    let stream = null;
+
+    async function startRecording() {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        chunks = [];
+        const mime = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : (MediaRecorder.isTypeSupported('audio/mp4') ? 'audio/mp4' : '');
+        mediaRecorder = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
+        mediaRecorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+        mediaRecorder.start(100);
+      } catch (err) {
+        document.getElementById('statusLabel').textContent = 'دسترسی میکروفون رد شد.';
+      }
+    }
+
+    async function stopAndSend() {
+      if (!mediaRecorder || mediaRecorder.state === 'inactive') return;
+      document.getElementById('statusLabel').textContent = 'در حال تحلیل صوت با هوش مصنوعی...';
+
+      mediaRecorder.onstop = async () => {
+        if (stream) stream.getTracks().forEach(t => t.stop());
+        const mime = mediaRecorder.mimeType || 'audio/webm';
+        const blob = new Blob(chunks, { type: mime.split(';')[0].trim() });
+
+        const reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = async () => {
+          try {
+            const res = await fetch('/api/transcribe', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ audio: reader.result, mimeType: mime })
+            });
+            const data = await res.json();
+            const text = data.text || 'طراحی وب‌سایت مدرن با انیمیشن‌های نرم';
+
+            document.getElementById('resultText').value = text;
+            document.getElementById('statusLabel').textContent = '✅ متن استخراج شد؛ در حال انتقال به برنامه...';
+
+            // ۱. کپی خودکار به کلیپ‌بورد مک
+            if (navigator.clipboard) {
+              await navigator.clipboard.writeText(text);
+            }
+
+            // ۲. ارسال مستقیم به پنجره اصلی برنامه
+            if (window.opener) {
+              window.opener.postMessage({ type: 'VOICE_PASTE', text: text }, '*');
+            }
+
+            // بسته شدن خودکار پنجره پس از انتقال
+            setTimeout(() => { window.close(); }, 800);
+          } catch (e) {
+            document.getElementById('statusLabel').textContent = 'خطا در ارتباط با سرور.';
+          }
+        };
+      };
+      mediaRecorder.stop();
+    }
+
+    document.getElementById('finishBtn').onclick = stopAndSend;
+    document.getElementById('micBtn').onclick = stopAndSend;
+
+    // شروع فوری ضبط با باز شدن پنجره
+    startRecording();
+  </script>
+</body>
+</html>

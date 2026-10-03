@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>پتروس دی‌ان‌اس | Petros Smart DNS Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Vazirmatn', sans-serif; background-color: #0b0f19; }
+    .glass-card { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    .neon-cyan { color: #00f2fe; text-shadow: 0 0 12px rgba(0, 242, 254, 0.4); }
+    .neon-border { border-color: rgba(0, 242, 254, 0.3); box-shadow: 0 0 15px rgba(0, 242, 254, 0.1); }
+  </style>
+</head>
+<body class="text-slate-200 min-h-screen p-4 md:p-8">
+
+  <div class="max-w-6xl mx-auto space-y-6">
+
+    <!-- Header -->
+    <header class="flex flex-col md:flex-row justify-between items-center glass-card p-6 rounded-2xl neon-border">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/30">
+          <i data-lucide="shield-check" class="w-7 h-7 text-white"></i>
+        </div>
+        <div>
+          <h1 class="text-2xl font-black neon-cyan">Petros Smart DNS</h1>
+          <p class="text-xs text-slate-400">سامانه هوشمند رفع تحریم و کاهش پینگ کنسول و پی‌سی</p>
+        </div>
+      </div>
+      <div class="mt-4 md:mt-0 flex items-center gap-3">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping mr-1"></span>
+          آنلاین و فعال
+        </span>
+        <span id="avg-ping-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+          ⚡ پینگ: ۱۸ms
+        </span>
+      </div>
+    </header>
+
+    <!-- DNS Addresses Banner -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="glass-card p-5 rounded-2xl flex items-center justify-between">
+        <div>
+          <div class="text-xs text-slate-400 mb-1">دی‌ان‌اس اول (Primary DNS)</div>
+          <div id="primary-dns" class="text-xl font-mono font-bold text-cyan-300">در حال دریافت...</div>
+        </div>
+        <button onclick="copyDns('primary-dns')" class="px-4 py-2 bg-cyan-600/20 hover:bg-cyan-600/40 text-cyan-300 rounded-xl text-xs font-semibold transition border border-cyan-500/30 flex items-center gap-2">
+          <i data-lucide="copy" class="w-4 h-4"></i> کپی
+        </button>
+      </div>
+
+      <div class="glass-card p-5 rounded-2xl flex items-center justify-between">
+        <div>
+          <div class="text-xs text-slate-400 mb-1">دی‌ان‌اس دوم (Secondary DNS)</div>
+          <div id="secondary-dns" class="text-xl font-mono font-bold text-blue-300">1.1.1.1</div>
+        </div>
+        <button onclick="copyDns('secondary-dns')" class="px-4 py-2 bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 rounded-xl text-xs font-semibold transition border border-blue-500/30 flex items-center gap-2">
+          <i data-lucide="copy" class="w-4 h-4"></i> کپی
+        </button>
+      </div>
+    </section>
+
+    <!-- Ping Monitor Grid -->
+    <section class="glass-card p-6 rounded-2xl space-y-4">
+      <div class="flex justify-between items-center">
+        <h2 class="text-lg font-bold flex items-center gap-2">
+          <i data-lucide="activity" class="w-5 h-5 text-cyan-400"></i> وضعیت پینگ و رفع تحریم سرورها
+        </h2>
+        <button onclick="fetchPing()" class="text-xs text-slate-400 hover:text-cyan-300 flex items-center gap-1 transition">
+          <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> به‌روزرسانی پینگ
+        </button>
+      </div>
+
+      <div id="ping-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- داینامیک توسط جاوااسکریپت پر می‌شود -->
+      </div>
+    </section>
+
+    <!-- Platform Setup Guides -->
+    <section class="glass-card p-6 rounded-2xl space-y-4">
+      <h2 class="text-lg font-bold flex items-center gap-2">
+        <i data-lucide="gamepad-2" class="w-5 h-5 text-cyan-400"></i> راهنمای تنظیم روی کنسول و دستگاه‌ها
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2">
+          <div class="font-bold text-cyan-300">🎮 پلی‌استیشن ۵ (PS5)</div>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Settings > Network > Settings > Set Up Internet Connection > انتخاب شبکه > Advanced Settings > DNS Settings = Manual و آی‌پی بالا را وارد کنید.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2">
+          <div class="font-bold text-emerald-300">🎮 ایکس‌باکس (Xbox Series X/S)</div>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Settings > General > Network settings > Advanced settings > DNS settings > Manual و آی‌پی دی‌ان‌اس پتروس را در فیلد Primary وارد کنید.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2">
+          <div class="font-bold text-purple-300">💻 کامپیوتر (Windows / macOS)</div>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            تنظیمات شبکه > Adapter Options > Properties IPv4 > وارد کردن دستی Primary DNS برای کل سیستم بدون نیاز به فیلترشکن.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Domain Checker -->
+    <section class="glass-card p-6 rounded-2xl space-y-4">
+      <h2 class="text-lg font-bold flex items-center gap-2">
+        <i data-lucide="check-circle" class="w-5 h-5 text-cyan-400"></i> بررسی آنلاین دامنه تحریمی
+      </h2>
+      <div class="flex gap-2">
+        <input id="domain-input" type="text" placeholder="مثال: ea.com یا docker.com" class="flex-1 bg-slate-900/80 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-cyan-500">
+        <button onclick="checkDomain()" class="px-5 py-2.5 bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold rounded-xl text-sm transition">بررسی</button>
+      </div>
+      <div id="domain-result" class="text-xs text-slate-400"></div>
+    </section>
+
+  </div>
+
+  <script>
+    async function loadStatus() {
+      try {
+        const res = await fetch('/api/status');
+        const data = await res.json();
+        document.getElementById('primary-dns').innerText = data.primaryDns || '127.0.0.1';
+        document.getElementById('secondary-dns').innerText = data.secondaryDns || '1.1.1.1';
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function fetchPing() {
+      const container = document.getElementById('ping-grid');
+      container.innerHTML = '<div class="text-xs text-slate-400 col-span-4">در حال سنجش پینگ سرورها...</div>';
+      try {
+        const res = await fetch('/api/ping');
+        const data = await res.json();
+        document.getElementById('avg-ping-badge').innerText = `⚡ میانگین پینگ: ${data.averagePingMs}ms`;
+        container.innerHTML = '';
+        data.targets.forEach(t => {
+          const card = document.createElement('div');
+          card.className = 'p-3 rounded-xl bg-slate-900/70 border border-slate-800 flex justify-between items-center';
+          card.innerHTML = `
+            <div>
+              <div class="text-xs font-bold text-slate-200">${t.name}</div>
+              <div class="text-[10px] text-slate-500 truncate max-w-[140px]">${t.host}</div>
+            </div>
+            <div class="text-right">
+              <span class="text-xs font-mono font-bold text-emerald-400">${t.pingMs}ms</span>
+              <div class="text-[9px] text-cyan-400">باز شده ⚡</div>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      } catch (e) {
+        container.innerHTML = '<div class="text-xs text-red-400 col-span-4">خطا در دریافت اطلاعات پینگ</div>';
+      }
+    }
+
+    async function checkDomain() {
+      const dom = document.getElementById('domain-input').value;
+      const resEl = document.getElementById('domain-result');
+      if (!dom) return;
+      resEl.innerText = 'در حال تحلیل مسیر دی‌ان‌اس...';
+      try {
+        const res = await fetch('/api/check-domain', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ domain: dom })
+        });
+        const d = await res.json();
+        resEl.innerHTML = `<span class="text-emerald-400 font-bold">✔ دامنه ${d.domain} رفع تحریم شد</span> — تاخیر: ${d.latencyMs}ms | مکانیسم: ${d.bypassEngine}`;
+      } catch (e) {
+        resEl.innerText = 'خطا در ارتباط با سرور دی‌ان‌اس';
+      }
+    }
+
+    function copyDns(id) {
+      const text = document.getElementById(id).innerText;
+      navigator.clipboard.writeText(text);
+      alert('دی‌ان‌اس کپی شد: ' + text);
+    }
+
+    window.onload = () => {
+      lucide.createIcons();
+      loadStatus();
+      fetchPing();
+    };
+  </script>
+</body>
+</html>
