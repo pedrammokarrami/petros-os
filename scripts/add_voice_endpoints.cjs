@@ -36,7 +36,7 @@ app.post("/api/voice/transcribe", async (req: Request, res: Response) => {
     const rRes = await fetch("http://127.0.0.1:20128/v1/audio/transcriptions", {
       method: "POST",
       headers: {
-        "Authorization": "Bearer sk-1b85c23a61dee238-k2vequ-4bc8de92"
+        "Authorization": "Bearer " + (process.env.LAYA_ROUTER_API_KEY || "") + ""
       },
       body: req.body as any
     });
