@@ -39,7 +39,7 @@ export class VoiceRecorderService {
 
   public async startRecording(): Promise<boolean> {
     try {
-      this.stream = await /* getUserMedia disabled */ undefined({ audio: true });
+      this.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       this.audioChunks = [];
 
       const mimeType = MediaRecorder.isTypeSupported('audio/webm')
@@ -115,21 +115,3 @@ export class VoiceRecorderService {
 }
 
 export const voiceRecorder = new VoiceRecorderService();
-
-export function updateReactInput(value: string) {
-  if (!value) return;
-  const inputEl = document.querySelector("input[placeholder*='Type your message'], textarea[placeholder*='Type your message']") as HTMLInputElement | HTMLTextAreaElement | null;
-  if (inputEl) {
-    const isTextarea = inputEl.tagName.toLowerCase() === "textarea";
-    const proto = isTextarea ? window.HTMLTextAreaElement.prototype : window.HTMLInputElement.prototype;
-    const desc = Object.getOwnPropertyDescriptor(proto, "value");
-    if (desc && desc.set) {
-      desc.set.call(inputEl, value);
-    } else {
-      inputEl.value = value;
-    }
-    inputEl.dispatchEvent(new Event("input", { bubbles: true }));
-    inputEl.dispatchEvent(new Event("change", { bubbles: true }));
-    inputEl.focus();
-  }
-}

@@ -1,6 +1,6 @@
 export async function startSmartVoice(onText: (text: string) => void) {
   try {
-    const stream = await /* getUserMedia disabled */ undefined({ audio: true });
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 16000 });
     const source = audioContext.createMediaStreamSource(stream);
     const processor = audioContext.createScriptProcessor(4096, 1, 1);

@@ -1050,7 +1050,7 @@ export default function App() {
           {isFuelActive ? (
             <FuelApiKeyView
               onBackToChat={() => setIsFuelActive(false)}
-              userEmail="arminsh00@gmail.com"
+              userEmail="you@gmail.com"
               language={language}
             />
           ) : isSpace2Active ? (
@@ -1228,7 +1228,7 @@ export default function App() {
         currentMessages={isSpace2Active ? space2Messages : messages}
         sessions={chatSessions}
         onDeleteSession={(id) => setChatSessions((prev) => prev.filter((s) => s.id !== id))}
-        onLoadSession={(loadedMessages) => {
+        onLoadSession={(loadedMessages: Message[]) => {
           setSpace2Messages(loadedMessages);
           setMessages(loadedMessages);
           setIsSpace2Active(true);
@@ -1267,7 +1267,7 @@ export default function App() {
         connectorName={mcpWebViewTitle}
         targetUrl={mcpWebViewUrl}
         language={language}
-        onFinished={(resultText) => {
+        onFinished={(resultText: string) => {
           const assistantMsg: Message = {
             id: `msg-asst-${Date.now()}`,
             role: 'agent',

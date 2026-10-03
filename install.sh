@@ -104,7 +104,7 @@ fi
 
 # 2. Install / Update NPM dependencies
 echo -e "${BLUE}📦 نصب و همگام‌سازی تمام پکیج‌های فرانت‌اند و بک‌اند...${NC}"
-npm install --no-audit --no-fund
+npm install --no-audit --no-fund --legacy-peer-deps
 
 echo -e "${GREEN}${BOLD}======================================================${NC}"
 echo -e "${GREEN}${BOLD}   ✅ نصب و پیکربندی با موفقیت کامل انجام شد!         ${NC}"

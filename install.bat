@@ -30,7 +30,7 @@ if not exist .env (
 
 :: Install dependencies
 echo Installing packages and modules...
-call npm install --no-audit --no-fund
+call npm install --no-audit --no-fund --legacy-peer-deps
 
 echo ======================================================
 echo    Codgar AI is ready! Starting on port 3000...

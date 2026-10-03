@@ -225,7 +225,7 @@ export function ProfileModal({
                 </div>
                 <div className="flex items-center gap-1.5 text-[11px] sm:text-xs text-slate-500 mt-0.5 font-medium">
                   <Mail className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-sky-500" />
-                  <span className="truncate max-w-[170px] sm:max-w-none">arminsh00@gmail.com</span>
+                  <span className="truncate max-w-[170px] sm:max-w-none">you@gmail.com</span>
                 </div>
               </div>
             </div>

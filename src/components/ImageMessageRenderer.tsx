@@ -10,9 +10,9 @@ export const ImageMessageRenderer: React.FC<{ text: string }> = ({ text }) => {
   const extractImageUrl = (t: string) => {
     if (!t || typeof t !== 'string') return null;
     const mdMatch = t.match(/!\[.*?\]\((https?:\/\/[^\s)]+)\)/);
-    if (mdMatch) return mdMatch;
+    if (mdMatch) return mdMatch[1] ?? mdMatch[0];
     const urlMatch = t.match(/(https?:\/\/[^\s]+(?:pollinations\.ai|\.(?:png|jpg|jpeg|webp|gif))[A-Za-z0-9_\-\.\/?%&=#]*)/i);
-    if (urlMatch) return urlMatch;
+    if (urlMatch) return urlMatch[1] ?? urlMatch[0];
     return null;
   };
 
@@ -36,7 +36,7 @@ export const ImageMessageRenderer: React.FC<{ text: string }> = ({ text }) => {
       document.body.removeChild(a);
       window.URL.revokeObjectURL(bUrl);
     } catch {
-      window.open(imageUrl, '_blank');
+      window.open(imageUrl, '_blank', 'noopener,noreferrer');
     }
   };
 
@@ -107,7 +107,7 @@ export const ImageMessageRenderer: React.FC<{ text: string }> = ({ text }) => {
               {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
             </button>
             <button
-              onClick={() => window.open(imageUrl, '_blank')}
+              onClick={() => window.open(imageUrl, '_blank', 'noopener,noreferrer')}
               className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition text-[11px]"
             >
               <ExternalLink className="w-3 h-3" />

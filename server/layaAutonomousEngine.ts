@@ -8,7 +8,7 @@ export class LayaAutonomousEngine {
   private homeDir = os.homedir();
   private routerPort = 20128;
   private routerBaseUrl = 'http://127.0.0.1:20128';
-  private apiKey = 'sk-1b85c23a61dee238-k2vequ-4bc8de92';
+  private apiKey = process.env.LAYA_ROUTER_API_KEY || process.env.NINEROUTER_API_KEY || ''; // [AutoFix] was hardcoded+leaked; set LAYA_ROUTER_API_KEY in .env
 
   // Real, tested models available on the local custom router
   private activeModels: string[] = [

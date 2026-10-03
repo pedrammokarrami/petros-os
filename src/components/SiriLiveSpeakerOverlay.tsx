@@ -183,7 +183,7 @@ export function SiriLiveSpeakerOverlay({
 
   const startVoiceCapture = async () => {
     try {
-      const stream = await /* getUserMedia disabled */ undefined({ audio: true });
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       audioChunksRef.current = [];
       const mime = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : (MediaRecorder.isTypeSupported("audio/mp4") ? "audio/mp4" : "");
       const mr = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);

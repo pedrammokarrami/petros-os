@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { exec, execSync } from 'child_process';
+import os from 'os';
 
 export interface ToolRequirement {
   id: string;
@@ -406,7 +407,13 @@ export class UniversalCompiler {
 
     // 2. Resolve target file
     const workspaceRoot = process.cwd();
-    const targetFile = filePath || path.join(workspaceRoot, `temp_exec_${Date.now()}.${this.getFileExtension(normalizedLang)}`);
+    // [AutoFix] isolate execution in a fresh temp dir (auto-cleaned) + sanitize file name
+    const execDir = fs.mkdtempSync(path.join(os.tmpdir(), 'codgar-exec-'));
+    const cleanupExecDir = () => { try { fs.rmSync(execDir, { recursive: true, force: true }); } catch {} };
+    const safeBase = String(filePath ? path.basename(filePath) : `temp_exec_${Date.now()}`)
+      .replace(/[^A-Za-z0-9_.-]/g, '_')
+      .slice(0, 80) || 'exec';
+    const targetFile = path.join(execDir, `${safeBase}.${this.getFileExtension(normalizedLang)}`);
     if (code) {
       fs.writeFileSync(targetFile, code, 'utf8');
     }
@@ -454,6 +461,7 @@ export class UniversalCompiler {
         console.log(`[UniversalCompiler] ⚡ Auto-install enabled. Automatically installing ${toolReq.name}...`);
         const installRes = await this.installTool(toolReqKey);
         if (!installRes.success) {
+          cleanupExecDir();
           return {
             success: false,
             language: normalizedLang,
@@ -464,6 +472,7 @@ export class UniversalCompiler {
         }
         autoInstalled = true;
       } else {
+        cleanupExecDir();
         return {
           success: false,
           language: normalizedLang,
@@ -483,6 +492,7 @@ export class UniversalCompiler {
         env: { ...process.env, PYTHONUNBUFFERED: '1', CI: '1' },
       });
 
+      cleanupExecDir();
       return {
         success: true,
         language: normalizedLang,
@@ -491,6 +501,7 @@ export class UniversalCompiler {
         durationMs: Date.now() - startTime,
       };
     } catch (execErr: any) {
+      cleanupExecDir();
       return {
         success: false,
         language: normalizedLang,

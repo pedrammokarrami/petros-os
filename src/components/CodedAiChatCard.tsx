@@ -515,7 +515,7 @@ export function CodedAiChatCard({
                               {isRTL ? 'صندوق ورودی جیمیل (Gmail MCP)' : 'Gmail Inbox (MCP)'}
                             </h4>
                             <span className="text-[10px] text-slate-500 font-mono">
-                              {msg.emailData?.to || 'arminsh00@gmail.com'}
+                              {msg.emailData?.to || 'you@gmail.com'}
                             </span>
                           </div>
                         </div>
@@ -552,7 +552,7 @@ export function CodedAiChatCard({
 
                         <button
                           type="button"
-                          onClick={() => window.open('https://mail.google.com/', '_blank')}
+                          onClick={() => window.open('https://mail.google.com/', '_blank', 'noopener,noreferrer')}
                           className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold transition cursor-pointer"
                         >
                           <ExternalLink className="w-3 h-3" />

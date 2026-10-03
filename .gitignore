@@ -1,0 +1,52 @@
+# dependencies
+node_modules/
+bun.lock
+
+# builds
+dist/
+build/
+out/
+*.tsbuildinfo
+
+# backups (use git history instead!)
+*.bak
+*.bak_*
+*.laya_bak
+
+# env & secrets
+.env
+.env.local
+.env.*.local
+
+# python
+__pycache__/
+*.py[cod]
+
+# OS / IDE
+.DS_Store
+.vscode/
+.idea/
+
+# xcode user state
+*.xcuserstate
+*.xcuserdatad
+.swiftpm/
+
+# logs & runtime state
+*.log
+overnight.log
+overnight_console.out
+.codgar_projects.json
+.codgar_memory.json
+
+# temp execution artifacts
+temp_exec_*.*
+
+# vite
+.vite/
+
+# coverage
+coverage/
+
+# autofix
+.autofix-backup/

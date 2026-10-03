@@ -99,8 +99,12 @@ export default {task['id']}Instance;
         log("تست بیلد با موفقیت پاس شد. در حال ثبت کامیت و پوش به گیت‌هاب...")
         subprocess.run(['git', 'add', task['file'], 'overnight.log'], check=False)
         subprocess.run(['git', 'commit', '-m', f"feat(auto): implement {task['id']} module autonomously"], check=False)
-        push_res = subprocess.run(['git', 'push', 'origin', 'main'], capture_output=True, text=True)
-        if push_res.returncode == 0:
+        if os.environ.get('ALLOW_AUTO_PUSH') == '1':
+            push_res = subprocess.run(['git', 'push', 'origin', 'main'], capture_output=True, text=True)
+        else:
+            push_res = None
+            log("پوش خودکار غیرفعال است (برای فعال‌سازی: ALLOW_AUTO_PUSH=1).")
+        if push_res is not None and push_res.returncode == 0:
             log("تغییرات مستقیماً در گیت‌هاب ذخیره شد.")
         else:
             log(f"هشدار در پوش به گیت: {push_res.stderr.strip()[:100]}")

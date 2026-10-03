@@ -11,15 +11,15 @@
 ### ۱. دستور تک‌خطی برای مک و لینوکس (Terminal):
 
 ```bash
-git clone https://github.com/audiovido/Codgar-.git && cd Codgar- && ./install.sh
+git clone https://github.com/pedrammokarrami/petros-os.git && cd petros-os && ./install.sh
 ```
 
 ### ۲. یا با دستور استاندارد NPM (در صورت داشتن Node.js):
 
 ```bash
 # ۱. کلون کردن مخزن
-git clone https://github.com/audiovido/Codgar-.git
-cd Codgar-
+git clone https://github.com/pedrammokarrami/petros-os.git
+cd petros-os
 
 # ۲. اجرای خودکار نصب پکیج‌ها و کانفیگ
 npm run setup

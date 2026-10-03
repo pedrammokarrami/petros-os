@@ -136,7 +136,7 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, art
         <div className="relative z-10 flex-1 w-full h-full bg-[#080a10] p-4 overflow-hidden">
           {activeTab === 'preview' && (
             <div className="w-full h-full">
-              <iframe title="Live Preview" srcDoc={currentCode || `<!DOCTYPE html>
+              <iframe title="Live Preview" srcDoc={rawCode || `<!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">

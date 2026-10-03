@@ -26,10 +26,10 @@ export interface YodawMenuDrawerProps {
 
 const MCP_SERVERS_DATA = [
   { id: "local_pc", name: "Local Machine Bridge MCP", category: "🖥️ سیستم", endpoint: "localhost:3000", icon: "🖥️", defaultStatus: "🟢 متصل و فعال", action: "تست شل", isLive: true },
-  { id: "gmail", name: "Gmail & Google Workspace MCP", category: "📋 اسناد", endpoint: "arminsh00@gmail.com", icon: "✉️", defaultStatus: "🟡 نیاز به لاگین", action: "🔗 لاگین گوگل", authUrl: "https://mail.google.com", isLive: false },
+  { id: "gmail", name: "Gmail & Google Workspace MCP", category: "📋 اسناد", endpoint: "you@gmail.com", icon: "✉️", defaultStatus: "🟡 نیاز به لاگین", action: "🔗 لاگین گوگل", authUrl: "https://mail.google.com", isLive: false },
   { id: "ue5", name: "Unreal Engine 5 Agent MCP", category: "🎮 گیمینگ", endpoint: "localhost:30010/remote/control", icon: "⚡", defaultStatus: "🔴 غیرفعال (UE5 باز نیست)", action: "تست پورت ۳۰۰۱۰", isLive: false },
   { id: "gateway", name: "Custom AI API Gateway", category: "🔑 هوش مصنوعی", endpoint: "Gemini 2.5 Flash Proxy", icon: "🔑", defaultStatus: "🟢 فعال (OmniRoute)", action: "پینگ روتور", isLive: true },
-  { id: "github", name: "GitHub Repository Sync MCP", category: "💻 کدنویسی", endpoint: "arminsh00 (GitHub)", icon: "🐙", defaultStatus: "⚪ توکن ست نشده", action: "🔗 تنظیم گیت‌هاب", authUrl: "https://github.com", isLive: false },
+  { id: "github", name: "GitHub Repository Sync MCP", category: "💻 کدنویسی", endpoint: "you (GitHub)", icon: "🐙", defaultStatus: "⚪ توکن ست نشده", action: "🔗 تنظیم گیت‌هاب", authUrl: "https://github.com", isLive: false },
   { id: "postgres", name: "PostgreSQL / Database MCP", category: "🗄️ دیتابیس", endpoint: "postgres_production (5432)", icon: "🗄️", defaultStatus: "🔴 آفلاین (پورت ۵۴۳۲)", action: "تست سوکت DB", isLive: false },
   { id: "discord", name: "Discord Bot Bridge MCP", category: "💬 ارتباطات", endpoint: "yodaw_bot_admin", icon: "👾", defaultStatus: "⚪ نیاز به توکن ربات", action: "🔗 اتصال دیسکورد", authUrl: "https://discord.com", isLive: false },
   { id: "notion", name: "Notion Knowledge Base MCP", category: "📋 اسناد", endpoint: "api.notion.com/v1", icon: "📓", defaultStatus: "🟡 نیاز به لاگین", action: "🔗 اتصال نوشن", authUrl: "https://notion.so", isLive: false },
@@ -92,7 +92,7 @@ export const YodawMenuDrawer: React.FC<YodawMenuDrawerProps> = (props) => {
   // تست اکشن یا باز کردن لینک واقعی
   const handleAction = async (item: typeof MCP_SERVERS_DATA[0]) => {
     if (item.authUrl) {
-      window.open(item.authUrl, "_blank");
+      window.open(item.authUrl, "_blank", 'noopener,noreferrer');
       return;
     }
 

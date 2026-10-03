@@ -272,7 +272,13 @@ export class InfiniteTokenPool {
    * Verifies PIN (123456) for authentication
    */
   public verifyPin(pin: string): boolean {
-    return pin.trim() === '123456';
+    // [AutoFix] PIN from env (default kept for UI compat) + constant-time compare
+    const expected = process.env.CODGAR_PIN || '123456';
+    const a = String(pin ?? '').trim();
+    if (a.length !== expected.length) return false;
+    let diff = 0;
+    for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ expected.charCodeAt(i);
+    return diff === 0;
   }
 
   public getGeneratedKeys(): GeneratedApiKey[] {

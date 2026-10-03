@@ -195,6 +195,7 @@ import { createYadowRouter } from "./server/routes/yadow";
 import express, { Request, Response } from 'express';
 import path from 'path';
 import fs from 'fs';
+import os from 'os';
 import * as child_process from 'child_process';
 import { spawn, exec } from 'child_process';
 import { createServer as createViteServer } from 'vite';
@@ -229,7 +230,25 @@ function setupArtifactInterceptor(appInstance: any) {
   });
 }
 
+// [AutoFix] Real local-IP helper (was referenced by /api/dns but never defined)
+function getLocalIP(): string {
+  try {
+    const nets = os.networkInterfaces();
+    for (const list of Object.values(nets)) {
+      for (const n of list || []) {
+        if (n && n.family === 'IPv4' && !n.internal) return n.address;
+      }
+    }
+  } catch {}
+  return '127.0.0.1';
+}
+
 const app = express();
+// [AutoFix] Security hardening (see server/security.ts)
+import { securityHeaders, apiRateLimiter, pinRateLimiter, loopbackOrTokenAuth, assertPublicUrl } from './server/security';
+app.use(securityHeaders);
+app.use('/api', apiRateLimiter);
+app.use(loopbackOrTokenAuth);
 app.use((req: any, res: any, next: any) => {
 
     // -------------------------------------------------------------
@@ -505,7 +524,7 @@ app.use('/media', express.static(mediaDir));
 const PORT = 3000;
 let WORKSPACE_ROOT = process.cwd();
 
-app.use(express.json({ limit: '15mb' }));
+// [AutoFix] removed 2nd express.json() (duplicate of the 50mb one above)
 
 // ========================================================
 
@@ -634,7 +653,7 @@ app.post('/api/local-bridge/organize-desktop', (req: Request, res: Response) => 
           fs.renameSync(fullSource, fullDest);
           movedFiles.push(file);
         }
-      } catch (err) {
+      } catch (err: any) {
         console.warn(`Could not move file ${file}:`, err);
       }
     }
@@ -796,8 +815,9 @@ function resolveSafePath(userPath: string): string {
     ? normalized
     : path.resolve(WORKSPACE_ROOT, normalized);
 
-  // Allow within workspace root
-  if (!resolved.startsWith(WORKSPACE_ROOT)) {
+  // [AutoFix] proper containment check (startsWith allowed siblings like /root-evil)
+  const rel = path.relative(WORKSPACE_ROOT, resolved);
+  if (!rel || rel.startsWith('..') || path.isAbsolute(rel)) {
     return WORKSPACE_ROOT;
   }
   return resolved;
@@ -1381,15 +1401,19 @@ app.get('/api/git/status', (req: Request, res: Response) => {
 
 app.get('/api/git/diff', (req: Request, res: Response) => {
   const { file, cached = false } = req.query;
-  const flag = cached === 'true' ? '--cached' : '';
-  const fileArg = file ? `"${file}"` : '';
+  // [AutoFix] no shell interpolation: argv array instead of exec(string)
+  const args: string[] = ['diff'];
+  if (cached === 'true') args.push('--cached');
+  if (typeof file === 'string' && file && !file.includes('\0')) args.push(file);
 
-  exec(`git diff ${flag} ${fileArg}`, { cwd: WORKSPACE_ROOT }, (err, stdout) => {
-    if (err) {
-      return res.json({ success: false, error: err.message, diff: '' });
-    }
+  const child = spawn('git', args, { cwd: WORKSPACE_ROOT });
+  let stdout = '';
+  child.stdout?.on('data', (d) => { stdout += d.toString(); });
+  child.on('close', (code) => {
+    if (code !== 0) return res.json({ success: false, error: `git diff exited with code ${code}`, diff: '' });
     res.json({ success: true, diff: stdout });
   });
+  child.on('error', (err) => res.json({ success: false, error: err.message, diff: '' }));
 });
 
 app.get('/api/git/log', (req: Request, res: Response) => {
@@ -1411,20 +1435,31 @@ app.get('/api/git/log', (req: Request, res: Response) => {
 
 app.post('/api/git/commit', (req: Request, res: Response) => {
   const { message, files = [] } = req.body;
-  if (!message) return res.status(400).json({ error: 'Commit message is required' });
+  if (!message || typeof message !== 'string') return res.status(400).json({ error: 'Commit message is required' });
+  if (message.length > 500) return res.status(400).json({ error: 'Commit message too long (max 500 chars)' });
+  const fileList = Array.isArray(files)
+    ? files.filter((f: unknown): f is string => typeof f === 'string' && !!f && !f.includes('\0'))
+    : [];
 
-  const addCmd = files.length > 0 ? `git add ${files.map((f: string) => `"${f}"`).join(' ')}` : 'git add -A';
-  exec(addCmd, { cwd: WORKSPACE_ROOT }, (addErr) => {
-    if (addErr) return res.status(500).json({ success: false, error: addErr.message });
-
-    const safeMessage = message.replace(/"/g, '\\"');
-    exec(`git commit -m "${safeMessage}"`, { cwd: WORKSPACE_ROOT }, (commitErr, stdout) => {
-      if (commitErr) {
-        return res.status(500).json({ success: false, error: commitErr.message });
-      }
-      res.json({ success: true, output: stdout.trim() });
-    });
+  // [AutoFix] no shell interpolation: argv arrays instead of exec(string)
+  const runGit = (args: string[]) => new Promise<{ code: number | null; out: string; err: string }>((resolve) => {
+    const c = spawn('git', args, { cwd: WORKSPACE_ROOT });
+    let out = '';
+    let err = '';
+    c.stdout?.on('data', (d) => { out += d.toString(); });
+    c.stderr?.on('data', (d) => { err += d.toString(); });
+    c.on('error', (e) => resolve({ code: -1, out, err: e.message }));
+    c.on('close', (code) => resolve({ code, out, err }));
   });
+
+  (async () => {
+    const addArgs = fileList.length > 0 ? ['add', '--', ...fileList] : ['add', '-A'];
+    const addRes = await runGit(addArgs);
+    if (addRes.code !== 0) return res.status(500).json({ success: false, error: addRes.err || 'git add failed' });
+    const commitRes = await runGit(['commit', '-m', message]);
+    if (commitRes.code !== 0) return res.status(500).json({ success: false, error: commitRes.err || 'git commit failed' });
+    res.json({ success: true, output: commitRes.out.trim() });
+  })().catch((e: any) => res.status(500).json({ success: false, error: e?.message || 'commit failed' }));
 });
 
 // ==========================================
@@ -1472,8 +1507,14 @@ app.get("/api/media/proxy", async (req: Request, res: Response) => {
     const targetUrl = req.query.url as string;
     if (!targetUrl) return res.status(400).send("URL is required");
     
-    const imageRes = await fetch(targetUrl, { signal: AbortSignal.timeout(30000) });
+    const safeUrl = await assertPublicUrl(targetUrl); // [AutoFix] SSRF guard
+    
+    const imageRes = await fetch(safeUrl.toString(), { signal: AbortSignal.timeout(30000) });
     if (!imageRes.ok) return res.status(imageRes.status).send("Failed to fetch image");
+    const ctype = imageRes.headers.get("content-type") || "";
+    if (!/^(image|audio|video)\//.test(ctype)) return res.status(415).send("Only image/audio/video content allowed");
+    const clen = Number(imageRes.headers.get("content-length") || "0");
+    if (clen > 25 * 1024 * 1024) return res.status(413).send("Media too large");
     
     res.setHeader("Content-Type", imageRes.headers.get("content-type") || "image/jpeg");
     res.setHeader("Cache-Control", "public, max-age=86400");
@@ -1499,11 +1540,15 @@ app.get("/api/images/:id", (req: Request, res: Response): void => {
   res.end(cached.buffer);
 });
 
+// [AutoFix] Conversation resume state (TODO: persist per-session instead of module-global)
+let pendingCodingPrompt: string | null = null;
+let resumeContext: { originalPrompt?: string; lastCode?: string } | null = null;
+
 async function handleAgentChat(req: Request, res: Response) {
 
   
   
-  const reqLang = req.reqLang || "fa";
+  const reqLang = (req as any).reqLang || (globalThis as any).reqLang || "fa";
   const history = (req.body && (req.body.history || req.body.messages)) || [];
   const context = (req.body && req.body.context) || {};
   const prompt = req.body?.prompt || req.body?.message;
@@ -1580,7 +1625,7 @@ export default function Counter() {
       console.log("[Diffusion Engine] 🚀 Fetching image buffer into Node RAM...");
       let imageBuffer = null;
       let contentType = "image/jpeg";
-      const fetchImageBuffer = async (targetUrl) => {
+      const fetchImageBuffer = async (targetUrl: string) => {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
         const res = await fetch(targetUrl, {
@@ -1612,7 +1657,7 @@ export default function Counter() {
         const replyMsg = `### 🎨 تصویر شما با موفقیت تولید شد:\n\n![${cleanDesc}](${streamUrl})\n\n[مشاهده کیفیت اصلی](${streamUrl})`;
         console.log("[Diffusion Engine] ✅ Success! Buffer size: " + Math.round(imageBuffer.length / 1024) + " KB.");
         return res.json({ success: true, status: "success", reply: replyMsg, response: replyMsg, output: replyMsg, dataUri: base64DataUri, streamUrl: streamUrl });
-      } catch (err) {
+      } catch (err: any) {
         console.error("[Diffusion Engine] ❌ Pipeline failure:", err.message);
         const fallbackMsg = "⚠️ خطا در دریافت تصویر (" + err.message + "). لطفاً مجدداً امتحان کنید.";
         return res.json({ success: true, status: "success", reply: fallbackMsg, response: fallbackMsg, output: fallbackMsg });
@@ -1843,7 +1888,7 @@ CORE CAPABILITIES:
     let responseText = '';
     let chosenModelProfile: any = null;
     let routerTierUsed = 'Claude Code Terminal (CLI)';
-    let executionSource: 'claude-cli' | 'claude-api' | 'auth-required' | 'live-bridge' | 'infinite-pool' = 'claude-cli';
+    let executionSource: 'claude-cli' | 'claude-api' | 'auth-required' | 'live-bridge' | 'infinite-pool' | 'laya-autonomous-engine' = 'claude-cli';
 
     // 1. Check for Email / Gmail / MCP Inbox intent
     const isEmailQuery = /(ایمیل|جیمیل|صندوق|inbox|email|gmail|ایمیلم|ایمیل‌های|ایمیل های|ایمیل اخیر|آخرین ایمیل|پیام‌ها|پیام هام|نامه هام|نامه‌ها|نامه‌هام|آخرین پیام|خوندن ایمیل|بخون ایمیلم)/i.test(trimmedP);
@@ -2540,7 +2585,7 @@ app.post("/api/voice/transcribe", async (req: Request, res: Response) => {
     const rRes = await fetch("http://127.0.0.1:20128/v1/audio/transcriptions", {
       method: "POST",
       headers: {
-        "Authorization": "Bearer sk-1b85c23a61dee238-k2vequ-4bc8de92"
+        "Authorization": `Bearer ${process.env.LAYA_ROUTER_API_KEY || ""}` // [AutoFix] was hardcoded+leaked
       },
       body: req.body as any
     });
@@ -3021,10 +3066,19 @@ app.post('/api/pool/restart', (req: Request, res: Response) => {
 
 app.get('/api/keys/list', (req: Request, res: Response) => {
   const pool = InfiniteTokenPool.getInstance();
+  // [AutoFix] masked list only; full key is shown once at creation (/api/keys/generate)
   res.json({
     success: true,
-    keys: pool.getGeneratedKeys(),
-    defaultPin: '123456',
+    keys: pool.getGeneratedKeys().map((k: any) => ({
+      id: k.id,
+      label: k.label,
+      status: k.status,
+      createdAt: k.createdAt,
+      lastUsedAt: k.lastUsedAt,
+      requestsHandled: k.requestsHandled,
+      tokensProcessed: k.tokensProcessed,
+      keyPreview: typeof k.key === 'string' ? k.key.slice(0, 12) + '...' : '',
+    })),
   });
 });
 
@@ -3039,7 +3093,7 @@ app.post('/api/keys/generate', (req: Request, res: Response) => {
   });
 });
 
-app.post('/api/keys/verify-pin', (req: Request, res: Response) => {
+app.post('/api/keys/verify-pin', pinRateLimiter, (req: Request, res: Response) => {
   const { pin } = req.body;
   if (!pin) {
     return res.status(400).json({ success: false, error: 'PIN is required' });
@@ -3385,31 +3439,7 @@ app.get('/api/tasks/:id/events', (req: Request, res: Response) => {
 // ==========================================
 // 8. MULTI-PROJECT & TEST REPO WORKSPACE API
 // ==========================================
-app.get('/api/projects', (req: Request, res: Response) => {
-  try {
-    const list = [
-      {
-        path: WORKSPACE_ROOT,
-        name: path.basename(WORKSPACE_ROOT),
-        isCurrent: true,
-      },
-    ];
-
-    // Check for test repositories
-    const testRepoPath = path.join(WORKSPACE_ROOT, 'test-project');
-    if (fs.existsSync(testRepoPath)) {
-      list.push({
-        path: testRepoPath,
-        name: 'test-project',
-        isCurrent: WORKSPACE_ROOT === testRepoPath,
-      });
-    }
-
-    res.json({ success: true, projects: list, currentProject: WORKSPACE_ROOT });
-  } catch (err: any) {
-    res.status(500).json({ success: false, error: err.message });
-  }
-});
+// [AutoFix] Removed duplicate GET /api/projects (dead route; canonical one is registered earlier)
 
 app.post('/api/projects/switch', (req: Request, res: Response) => {
   try {
@@ -3873,8 +3903,9 @@ try { (app as any).use("/api/companion", createYadowRouter()); (app as any).use(
 
 
 
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`CODGAR Server running on http://0.0.0.0:${PORT}`);
+const BIND_HOST = process.env.BIND_HOST || '127.0.0.1';
+app.listen(PORT, BIND_HOST, () => {
+    console.log(`CODGAR Server running on http://${BIND_HOST}:${PORT}`);
   });
 }
 
@@ -3986,7 +4017,7 @@ app.post(['/api/agent/prompt', '/api/chat', '/api/companion/chat'], async (req: 
       signal: AbortSignal.timeout(90000),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer sk-1b85c23a61dee238-k2vequ-4bc8de92'
+        'Authorization': `Bearer ${process.env.LAYA_ROUTER_API_KEY || ''}` // [AutoFix] was hardcoded+leaked
       },
       body: JSON.stringify({
         model: 'codgar-code',

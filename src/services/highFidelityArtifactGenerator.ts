@@ -1196,7 +1196,7 @@ export class HighFidelityArtifactGenerator {
   // 8. UNIVERSAL FLAGSHIP STUDIO APP
   // ==========================================
   public static createUniversalStudioApp(prompt: string, replyText: string, isFa: boolean): PreviewArtifact {
-    const cleanTitle = prompt.length > 50 ? prompt.slice(0, 48) + '...' : prompt;
+    const cleanTitle = (prompt.length > 50 ? prompt.slice(0, 48) + '...' : prompt).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); // [AutoFix] XSS escape
     return {
       id: `art-univ-${Date.now()}`,
       title: cleanTitle,
@@ -1240,7 +1240,7 @@ export class HighFidelityArtifactGenerator {
         <span>${isFa ? 'محیط اجرای اختصاصی برنامه' : 'Autonomous Application Engine'}</span>
       </h3>
       <p class="text-xs text-slate-300 leading-relaxed">
-        ${replyText ? replyText.slice(0, 300).replace(/```[\s\S]*?```/g, '').replace(/[*#]/g, '') : (isFa ? 'برنامه بر اساس درخواست دقیق شما پیاده‌سازی و در محیط سندباکس بهینه‌سازی شد.' : 'Application generated and optimized directly from your specification.')}
+        ${replyText ? replyText.slice(0, 300).replace(/```[\s\S]*?```/g, '').replace(/[*#]/g, '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;') : (isFa ? 'برنامه بر اساس درخواست دقیق شما پیاده‌سازی و در محیط سندباکس بهینه‌سازی شد.' : 'Application generated and optimized directly from your specification.')}
       </p>
 
       <div class="p-4 rounded-2xl bg-black/60 border border-cyan-500/20 flex flex-col sm:flex-row items-center justify-between gap-3">

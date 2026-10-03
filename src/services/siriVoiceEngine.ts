@@ -62,7 +62,7 @@ export class SiriVoiceEngine {
       }
 
       try {
-        this.microphoneStream = await /* getUserMedia disabled */ undefined({
+        this.microphoneStream = await navigator.mediaDevices.getUserMedia({
           audio: {
             echoCancellation: true,
             noiseSuppression: true,

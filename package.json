@@ -12,7 +12,7 @@
     "start": "node dist/server.cjs",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
-    "setup": "cp -n .env.example .env 2>/dev/null || true && npm install",
+    "setup": "cp -n .env.example .env 2>/dev/null || true && npm install --legacy-peer-deps",
     "lint": "tsc --noEmit"
   },
   "dependencies": {
@@ -24,6 +24,8 @@
     "@xenova/transformers": "^2.17.2",
     "dotenv": "^17.2.3",
     "express": "^4.21.2",
+    "express-rate-limit": "^8.7.0",
+    "helmet": "^8.3.0",
     "lucide-react": "^0.546.0",
     "motion": "^12.43.0",
     "nodemailer": "^10.0.10",

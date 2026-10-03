@@ -55,6 +55,8 @@ export class ApiClient {
         signal: controller.signal,
         headers: {
           'Content-Type': 'application/json',
+          // [AutoFix] remote API auth; set via localStorage.setItem('codgar_admin_token', '...')
+          'x-admin-token': (typeof localStorage !== 'undefined' && localStorage.getItem('codgar_admin_token')) || '',
           ...(options.headers || {}),
         },
       });
